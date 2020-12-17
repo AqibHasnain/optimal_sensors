@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 def observability_maximization_using_model(A,W,noutputs,nobs_genes,geneIDs):
-	print('---Observability analysis of model---')
+	print('---------Observability analysis of model---------')
 	start_time = time.time()
 	nobs = A.shape[0]
 	Wh = np.dot(np.concatenate((np.identity(noutputs),np.zeros((noutputs,nobs-noutputs))),axis=1),W)
@@ -17,7 +17,7 @@ def observability_maximization_using_model(A,W,noutputs,nobs_genes,geneIDs):
 	return Wh,maxcolNorms,idx_maxcolNorms,obs_geneIDs
 
 def measure_observability_from_diffdata(X,geneIDs,nobs_genes):
-	print('---Calculating observability from differential data---')
+	print('---------Calculating observability from differential data---------')
 	start_time = time.time()
 	obs_data = np.linalg.norm(X,ord=2,axis=1)
 	idx_maxobs_data = np.flip(obs_data.argsort()[-nobs_genes:])
@@ -29,7 +29,7 @@ def measure_observability_from_diffdata(X,geneIDs,nobs_genes):
 def measure_observability_from_data(Xc,Xt,geneIDs,nreps,ntimepts,nobs_genes):
 	# ||x(all_time)_treatment||/||x(0) malathion|| - ||x(all_time)_control||/||x(0)_control|| 
 	# taking mean over each replicate to get final observability measure
-	print('---Caclulating observability from control and treatment data') 
+	print('---------Calculating observability from control and treatment data---------') 
 	start_time = time.time()
 	obs_c = np.zeros([Xc.shape[0],nreps])
 	obs_t = np.zeros([Xt.shape[0],nreps])

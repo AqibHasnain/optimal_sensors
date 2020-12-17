@@ -106,7 +106,7 @@ def get_rep_stats(data,nTraj,nT):
 
 def preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=False,save_data=False):
     start_time = time.time()
-    print('---Preprocessing replicates',reps,'---')
+    print('---------Preprocessing replicates',reps,'---------')
 
     df = pd.read_csv(datadir)
     nreps = len(reps)

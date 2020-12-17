@@ -27,7 +27,7 @@ def get_snapshots_from_global(X,nT,nTraj):
 
 def n_step_prediction(A,X,ntimepts,nreps):
 	start_time = time.time()
-	print('---Computing MSE for n-step prediction---')
+	print('---------Computing MSE for n-step prediction---------')
 	X_pred = np.zeros((A.shape[0],ntimepts*nreps))
 	count = 0
 	for i in range(0,nreps):
@@ -42,7 +42,7 @@ def n_step_prediction(A,X,ntimepts,nreps):
 	return X_pred
 
 def extrapolate(A,X,extrap_horizon,ntimepts,nreps):
-	print('---Extrapolating using DMD model---')
+	print('---------Extrapolating using DMD model---------')
 	start_time = time.time()
 	X_extrap = np.zeros((A.shape[0],extrap_horizon*nreps)) 
 	count = 0
@@ -56,7 +56,7 @@ def extrapolate(A,X,extrap_horizon,ntimepts,nreps):
 
 def dmd(X,ntimepts,nreps,extrap_horizon=20,extrapolate=False):
 	start_time = time.time()
-	print('---Computing DMD operator---')
+	print('---------Computing DMD operator---------')
 	Xp,Xf = get_snapshots_from_global(X,ntimepts,nreps)
 	A = Xf @ np.linalg.pinv(Xp)
 	L, V = np.linalg.eig(A)
