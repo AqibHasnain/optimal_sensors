@@ -4,13 +4,18 @@ from dmd import *
 from observability import *
 from deep_KO_learning import *
 import pickle
+import sys
 
 datadir = 'data/tpm.csv'
 do_deepDMD = False
-dumpall = False
+dumpall = True
 ntimepts = 12 # ntimepts per trajectory (replicate)
-reps = [0,1,2] # change this to correspond to the replicates you want to model
-# The filtering is always done with all three replicates. 
+
+reps = sys.argv[1]
+reps = list(reps.strip('[]').split(','))
+reps = [int(i) for i in reps]
+# reps = [1] #, [1], [2], [0,1], [0,2], [1,2], [0,1,2] # change this to correspond to the replicates you want to model and analyze
+# Note that filtering of genes is always done with all three replicates. 
 
 X,ntimeptsModel,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs = \
     preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=False,save_data=False)
@@ -19,9 +24,8 @@ X,ntimeptsModel,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs = \
 # geneIDs are the corresponding geneIDs
 
 if not do_deepDMD:
-    A,W,Xpred,Xextrap = dmd(X,ntimeptsModel,len(reps),extrapolate=False)
+    A,Xpred,Xextrap = dmd(X,ntimeptsModel,len(reps),extrapolate=False)
     # A is the DMD operator
-    # V are A's right eigenvectors, W are A's left eigenvectors
     # X_pred is the matrix of predictions given by A for X
 else: 
     ### Neural network parameters ###
@@ -42,13 +46,15 @@ else:
         geneIDs.append('OBSERVABLE'+str(i))
 
 noutputs = 1
-nobs_genes = 25
+nobs_genes = 100
+Tf = 9
+Wh,idx_maxEnergy,maxEnergy_geneIDs = energy_maximization_single_output(X,A,ntimeptsModel,reps,Tf,geneIDs,nobs_genes)
 
-Wh,Wh_maxcolNorms,idx_maxcolNorms,obs_geneIDs = observability_maximization_using_model(A,W,noutputs,nobs_genes,geneIDs)
-# Wh is the sampling matrix which we use to maximize observability or output energy
-# Wh_maxcolNorms are the nobs_genes maximum column 1-norms of Wh. 
-# idx_maxcolNorms are the indices corresponding to Wh_maxcolNorms
-# obs_geneIDs are the geneIDs corresponding to Wh_maxcolNorms
+# Wh,Wh_maxcolNorms,idx_maxcolNorms,obs_geneIDs = observability_maximization_using_model(A,W,noutputs,nobs_genes,geneIDs)
+# # Wh is the sampling matrix which we use to maximize observability or output energy
+# # Wh_maxcolNorms are the nobs_genes maximum column 1-norms of Wh. 
+# # idx_maxcolNorms are the indices corresponding to Wh_maxcolNorms
+# # obs_geneIDs are the geneIDs corresponding to Wh_maxcolNorms
 
 maxobs_diffdata,idx_maxobs_diffdata,obs_diffdata_geneIDs = measure_observability_from_diffdata(X,geneIDs,nobs_genes)
 # maxobs_diffdata are the nobs_genes maximum observability measures in the differential data
@@ -75,25 +81,28 @@ if dumpall:
             'mean_bs':mean_bs,\
             'stdev_bs':stdev_bs,\
             'A':A,\
-            'W':W,\
             'Xpred':Xpred,\
             'Xextrap':Xextrap,\
             'noutputs':noutputs,\
             'nobs_genes':nobs_genes,\
             'Wh':Wh,\
-            'Wh_maxcolNorms':Wh_maxcolNorms,\
-            'idx_maxcolNorms':idx_maxcolNorms,\
-            'obs_geneIDs':obs_geneIDs,\
+            'idx_maxEnergy':idx_maxEnergy,\
+            'maxEnergy_geneIDs':maxEnergy_geneIDs,\
             'maxobs_data':maxobs_data,\
             'idx_maxobs_data':idx_maxobs_data,\
             'obs_data_geneIDs':obs_data_geneIDs,\
             'maxobs_diffdata':maxobs_diffdata,\
             'idx_maxobs_diffdata':idx_maxobs_diffdata,\
             'obs_diffdata_geneIDs':obs_diffdata_geneIDs,\
-             }
-    pickle.dump(datadict, open('dict_full.pickle', 'wb'))
+            'idx_maxEnergy':idx_maxEnergy,\
+            'maxEnergy_geneIDs':maxEnergy_geneIDs}
 
+    namestr = ''
+    for i in range(len(reps)):
+        namestr += str(reps[i])
+    pickle.dump(datadict, open('dataDump'+namestr+'.pickle', 'wb'))
 
+print('\n')
 
 
 

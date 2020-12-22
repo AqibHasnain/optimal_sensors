@@ -64,13 +64,12 @@ def dmd(X,ntimepts,nreps,extrap_horizon=20,extrapolate=False):
 		print('Model is unstable with mod of eigenvalue',np.absolute(L).max())
 	sortLinds = (np.argsort(np.absolute(L)))[::-1]
 	V = V[:,sortLinds]
-	W = np.linalg.inv(V)
 	print(time.time() - start_time, 'seconds for DMD')
 	X_pred = n_step_prediction(A,X,ntimepts,nreps)
 	if extrapolate:
 		X_extrap = extrapolate(A,X,extrap_horizon,ntimepts,nreps)
 	else:
 		X_extrap = None
-	return A,W,X_pred,X_extrap
+	return A,X_pred,X_extrap
 
 

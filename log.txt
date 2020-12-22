@@ -1,0 +1,138 @@
+---------Preprocessing replicates [0] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.10590982437133789 seconds
+---------Computing DMD operator---------
+Model is unstable with mod of eigenvalue 1.0992715088389684
+2.5902199745178223 seconds for DMD
+---------Computing MSE for n-step prediction---------
+1.9418890476226807 seconds for n-step prediction
+MSE for n-step prediction is 3.998e-14
+------Optimizing for Optimal State Observer------
+------Using one trajectory------
+Initial objective: -2195.62502917242
+Final objective: -75503365132.65239
+8.174276002248128 minutes
+---------Calculating observability from differential data---------
+0.00046706199645996094 seconds
+---------Calculating observability from control and treatment data---------
+0.0005929470062255859 seconds
+
+
+---------Preprocessing replicates [1] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.12102890014648438 seconds
+---------Computing DMD operator---------
+2.7407662868499756 seconds for DMD
+---------Computing MSE for n-step prediction---------
+2.492830991744995 seconds for n-step prediction
+MSE for n-step prediction is 9.465e-15
+------Optimizing for Optimal State Observer------
+------Using one trajectory------
+Initial objective: -735.5796530704391
+Final objective: -15455754434.2885
+9.373875133196513 minutes
+---------Calculating observability from differential data---------
+0.0004410743713378906 seconds
+---------Calculating observability from control and treatment data---------
+0.0004849433898925781 seconds
+
+
+---------Preprocessing replicates [2] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.11588883399963379 seconds
+---------Computing DMD operator---------
+2.8130929470062256 seconds for DMD
+---------Computing MSE for n-step prediction---------
+2.188469886779785 seconds for n-step prediction
+MSE for n-step prediction is 9.465e-15
+------Optimizing for Optimal State Observer------
+------Using one trajectory------
+Initial objective: -756.7889724914074
+Final objective: -2234463101.725432
+8.53782841761907 minutes
+---------Calculating observability from differential data---------
+0.0004589557647705078 seconds
+---------Calculating observability from control and treatment data---------
+0.00045108795166015625 seconds
+
+
+---------Preprocessing replicates [0, 1] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.10911202430725098 seconds
+---------Computing DMD operator---------
+Model is unstable with mod of eigenvalue 1.0973310694159355
+2.875617742538452 seconds for DMD
+---------Computing MSE for n-step prediction---------
+4.240593910217285 seconds for n-step prediction
+MSE for n-step prediction is 1.211e-13
+------Optimizing for Optimal State Observer------
+------Using two trajectories------
+Initial objective: -3239.8647344256174
+Final objective: -33617161217.223854
+16.01099403699239 minutes
+---------Calculating observability from differential data---------
+0.0006031990051269531 seconds
+---------Calculating observability from control and treatment data---------
+0.0013728141784667969 seconds
+
+
+---------Preprocessing replicates [0, 2] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.11836814880371094 seconds
+---------Computing DMD operator---------
+Model is unstable with mod of eigenvalue 1.1951949164513527
+2.9273900985717773 seconds for DMD
+---------Computing MSE for n-step prediction---------
+5.06103777885437 seconds for n-step prediction
+MSE for n-step prediction is 6.860e-14
+------Optimizing for Optimal State Observer------
+------Using two trajectories------
+Initial objective: -4676.119157732637
+Final objective: -1836164638.2221572
+27.53393971522649 minutes
+---------Calculating observability from differential data---------
+0.0006749629974365234 seconds
+---------Calculating observability from control and treatment data---------
+0.001458883285522461 seconds
+
+
+---------Preprocessing replicates [1, 2] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.10248327255249023 seconds
+---------Computing DMD operator---------
+Model is unstable with mod of eigenvalue 1.0971345030572761
+2.5612971782684326 seconds for DMD
+---------Computing MSE for n-step prediction---------
+4.612995147705078 seconds for n-step prediction
+MSE for n-step prediction is 2.327e-13
+------Optimizing for Optimal State Observer------
+------Using two trajectories------
+Initial objective: -2897.9764022850036
+Final objective: -25264766104.150852
+34.72596251964569 minutes
+---------Calculating observability from differential data---------
+0.0006020069122314453 seconds
+---------Calculating observability from control and treatment data---------
+0.0012431144714355469 seconds
+
+
+---------Preprocessing replicates [0, 1, 2] ---------
+1896 genes with CV less than 0.1 and expression greater than 0.12 (across all replicates)
+0.11230611801147461 seconds
+---------Computing DMD operator---------
+Model is unstable with mod of eigenvalue 1.189005371667727
+2.6257498264312744 seconds for DMD
+---------Computing MSE for n-step prediction---------
+6.3896660804748535 seconds for n-step prediction
+MSE for n-step prediction is 1.287e-13
+------Optimizing for Optimal State Observer------
+------Using three trajectories------
+Initial objective: -5386.137245379708
+Final objective: -29907469439.063408
+39.56497833331426 minutes
+---------Calculating observability from differential data---------
+0.0006508827209472656 seconds
+---------Calculating observability from control and treatment data---------
+0.001911163330078125 seconds
+
+
