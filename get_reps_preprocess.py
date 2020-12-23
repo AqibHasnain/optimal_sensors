@@ -40,7 +40,7 @@ def get_reps(reps,ntimepts):
     elif reps == [1]:
         keepers = list(allinds - set(list(range(0,ntimepts*nreps,3))) - set(list(range(2,ntimepts*nreps,3))))
     elif reps == [2]:
-        keepers = list(allinds - set(list(range(0,ntimepts*nreps,3))) - set(list(range(2,ntimepts*nreps,3))))
+        keepers = list(allinds - set(list(range(0,ntimepts*nreps,3))) - set(list(range(1,ntimepts*nreps,3))))
     elif reps == [0,1]: # set subtract column inds for rep3 from allinds
         keepers = list(allinds - set(list(range(2,ntimepts*nreps,3)))) # column inds for rep1 and rep2
     elif reps == [0,2]: # set subtract column inds for rep2 from allinds
@@ -49,6 +49,7 @@ def get_reps(reps,ntimepts):
         keepers = list(allinds - set(list(range(0,ntimepts*nreps,3))))
     elif reps == [0,1,2]:
         keepers = list(allinds)
+    keepers.sort()
     return keepers
 
 def mean_filter(control,treatment,mean_cutoff=0.25):

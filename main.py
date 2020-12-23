@@ -11,11 +11,14 @@ do_deepDMD = False
 dumpall = True
 ntimepts = 12 # ntimepts per trajectory (replicate)
 
-reps = sys.argv[1]
-reps = list(reps.strip('[]').split(','))
-reps = [int(i) for i in reps]
-# reps = [1] #, [1], [2], [0,1], [0,2], [1,2], [0,1,2] # change this to correspond to the replicates you want to model and analyze
-# Note that filtering of genes is always done with all three replicates. 
+if len(sys.argv) < 2:
+    reps = [2]
+else:
+    reps = sys.argv[1]
+    reps = list(reps.strip('[]').split(','))
+    reps = [int(i) for i in reps]
+
+# Note that preprocessing of genes is always done with all three replicates. 
 
 X,ntimeptsModel,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs = \
     preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=False,save_data=False)
@@ -93,9 +96,7 @@ if dumpall:
             'obs_data_geneIDs':obs_data_geneIDs,\
             'maxobs_diffdata':maxobs_diffdata,\
             'idx_maxobs_diffdata':idx_maxobs_diffdata,\
-            'obs_diffdata_geneIDs':obs_diffdata_geneIDs,\
-            'idx_maxEnergy':idx_maxEnergy,\
-            'maxEnergy_geneIDs':maxEnergy_geneIDs}
+            'obs_diffdata_geneIDs':obs_diffdata_geneIDs}
 
     namestr = ''
     for i in range(len(reps)):
