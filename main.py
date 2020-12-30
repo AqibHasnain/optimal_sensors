@@ -7,12 +7,14 @@ import pickle
 import sys
 
 datadir = 'data/tpm.csv'
-do_deepDMD = False
+dodeepDMD = False
+doSparse = True
+doReduce = True
 dumpall = True
 ntimepts = 12 # ntimepts per trajectory (replicate)
 
 if len(sys.argv) < 2:
-    reps = [2]
+    reps = [0,1,2]
 else:
     reps = sys.argv[1]
     reps = list(reps.strip('[]').split(','))
@@ -26,8 +28,8 @@ X,ntimeptsModel,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs = \
 # ntimeptsNew is the number of timepoints used for training the following model
 # geneIDs are the corresponding geneIDs
 
-if not do_deepDMD:
-    A,Xpred,Xextrap = dmd(X,ntimeptsModel,len(reps),extrapolate=False)
+if not dodeepDMD:
+    A,Xpred,Xextrap = dmd(X,ntimeptsModel,len(reps),rank_reduce=doReduce,makeSparse=doSparse)
     # A is the DMD operator
     # X_pred is the matrix of predictions given by A for X
 else: 
@@ -101,6 +103,10 @@ if dumpall:
     namestr = ''
     for i in range(len(reps)):
         namestr += str(reps[i])
+    if doSparse:
+        namestr += '_sparse'
+    if doReduce:
+        namestr += '_reduced'
     pickle.dump(datadict, open('dataDump'+namestr+'.pickle', 'wb'))
 
 print('\n')
