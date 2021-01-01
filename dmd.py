@@ -27,7 +27,7 @@ def get_snapshots_from_global(X,nT,nTraj):
 
 def n_step_prediction(A,X,ntimepts,nreps):
     start_time = time.time()
-    print('---------Computing MSE for n-step prediction---------')
+    print('---------Computing R^2 for n-step prediction---------')
     X_pred = np.zeros((A.shape[0],ntimepts*nreps))
     count = 0
     for i in range(0,nreps):
@@ -37,8 +37,9 @@ def n_step_prediction(A,X,ntimepts,nreps):
             count += 1
     print(time.time() - start_time, "seconds", "for n-step prediction")
 
-    mse_pred = np.linalg.norm(X - X_pred,2)/(ntimepts-nreps) # minus nreps because initial conditions are given 
-    print(f'MSE for n-step prediction is {mse_pred:.3e}')
+    feature_means = np.mean(X,axis=1).reshape(len(X),1)
+    cd = 1 - ((np.linalg.norm(X - X_pred,ord=2)**2)/(np.linalg.norm(X - feature_means,ord=2)**2))   # coeff of determination aka R^2 
+    print(f'Coefficient of determination for n-step prediction is {cd:.3e}')
     return X_pred
 
 def extrapolate(A,X,extrap_horizon,ntimepts,nreps):
@@ -56,7 +57,7 @@ def extrapolate(A,X,extrap_horizon,ntimepts,nreps):
 
 def sparsity(A,thresh):
     start_time = time.time()
-    print('---------Forcing sparsity in model---------')
+    print('---------Forcing sparsity in model with threshhold',thresh,'---------')
     return (np.absolute(A) > thresh) * A
 
 def dmd(X,ntimepts,nreps,extrap_horizon=20,sparse_thresh=2e-3,rank_reduce=False,makeSparse=False,extrapolate=False):

@@ -46,45 +46,26 @@ def measure_observability_from_data(Xc,Xt,geneIDs,nreps,ntimepts,nobs_genes):
 
 def oneTraj_obj(x,At,x0,T):
     ''' Objective function for energy_maximization_single_output() '''
-    return - ( np.linalg.norm(x@At[0]@x0[0],ord=2) + np.linalg.norm(x@At[1]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[0],ord=2) + np.linalg.norm(x@At[3]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[0],ord=2) + np.linalg.norm(x@At[5]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[0],ord=2) + np.linalg.norm(x@At[7]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[0],ord=2) + np.linalg.norm(x@At[9]@x0[0],ord=2) )
+    obj = 0
+    for i in range(len(At)):
+        obj += -( np.linalg.norm(x@At[i]@x0[0],ord=2) )
+    return obj
 
 def twoTraj_obj(x,At,x0,T):
     ''' Objective function for energy_maximization_single_output() '''
-    return - ( np.linalg.norm(x@At[0]@x0[0],ord=2) + np.linalg.norm(x@At[1]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[0],ord=2) + np.linalg.norm(x@At[3]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[0],ord=2) + np.linalg.norm(x@At[5]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[0],ord=2) + np.linalg.norm(x@At[7]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[0],ord=2) + np.linalg.norm(x@At[9]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[0]@x0[1],ord=2) + np.linalg.norm(x@At[1]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[1],ord=2) + np.linalg.norm(x@At[3]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[1],ord=2) + np.linalg.norm(x@At[5]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[1],ord=2) + np.linalg.norm(x@At[7]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[1],ord=2) + np.linalg.norm(x@At[9]@x0[1],ord=2) )
+    obj = 0
+    for i in range(len(At)):
+        obj += -( np.linalg.norm(x@At[i]@x0[0],ord=2) + np.linalg.norm(x@At[i]@x0[1],ord=2) )
+    return obj
 
 def threeTraj_obj(x,At,x0,T):
     ''' Objective function for energy_maximization_single_output() '''
-    return - ( np.linalg.norm(x@At[0]@x0[0],ord=2) + np.linalg.norm(x@At[1]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[0],ord=2) + np.linalg.norm(x@At[3]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[0],ord=2) + np.linalg.norm(x@At[5]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[0],ord=2) + np.linalg.norm(x@At[7]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[0],ord=2) + np.linalg.norm(x@At[9]@x0[0],ord=2) + \
-             np.linalg.norm(x@At[0]@x0[1],ord=2) + np.linalg.norm(x@At[1]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[1],ord=2) + np.linalg.norm(x@At[3]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[1],ord=2) + np.linalg.norm(x@At[5]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[1],ord=2) + np.linalg.norm(x@At[7]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[1],ord=2) + np.linalg.norm(x@At[9]@x0[1],ord=2) + \
-             np.linalg.norm(x@At[0]@x0[2],ord=2) + np.linalg.norm(x@At[1]@x0[2],ord=2) + \
-             np.linalg.norm(x@At[2]@x0[2],ord=2) + np.linalg.norm(x@At[3]@x0[2],ord=2) + \
-             np.linalg.norm(x@At[4]@x0[2],ord=2) + np.linalg.norm(x@At[5]@x0[2],ord=2) + \
-             np.linalg.norm(x@At[6]@x0[2],ord=2) + np.linalg.norm(x@At[7]@x0[2],ord=2) + \
-             np.linalg.norm(x@At[8]@x0[2],ord=2) + np.linalg.norm(x@At[9]@x0[2],ord=2) )
+    obj = 0
+    for i in range(len(At)):
+        obj += -( np.linalg.norm(x@At[i]@x0[0],ord=2) + np.linalg.norm(x@At[i]@x0[1],ord=2) + np.linalg.norm(x@At[i]@x0[2],ord=2) )
+    return obj
 
-
-def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,geneIDs,nobs_genes):    
+def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,geneIDs,nobs_genes,IC=0):    
     print('------Optimizing for Optimal State Observer------')
     start_time = time.time()
     C0 = np.random.uniform(0.0,1.0,size=(1,len(A)))
@@ -94,7 +75,7 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,geneIDs,nobs_genes
     x0 = []
     if len(repnums) == 1:
         print('------Using one trajectory------')
-        x0.append(X[:,0:1])
+        x0.append(X[:,IC:IC+1])
         print('Initial objective: ' + str(oneTraj_obj(C0,At,x0,Tf)))
         # optimize
         solution = minimize(oneTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')
@@ -104,7 +85,8 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,geneIDs,nobs_genes
     elif len(repnums) == 2:
         print('------Using two trajectories------')
         for i in range(0,len(repnums)):
-            x0.append(X[:,i*ntimepts:i*ntimepts+1])
+            # x0.append(X[:,i*ntimepts:i*ntimepts+1])
+            x0.append(X[:,i*ntimepts+IC:i*ntimepts+1+IC])
         print('Initial objective: ' + str(twoTraj_obj(C0,At,x0,Tf)))
         # optimize
         solution = minimize(twoTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')
@@ -114,7 +96,8 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,geneIDs,nobs_genes
     else:
         print('------Using three trajectories------')
         for i in range(0,len(repnums)):
-            x0.append(X[:,i*ntimepts:i*ntimepts+1])
+            # x0.append(X[:,i*ntimepts:i*ntimepts+1])
+            x0.append(X[:,i*ntimepts+IC:i*ntimepts+1+IC])
         print('Initial objective: ' + str(threeTraj_obj(C0,At,x0,Tf)))
         # optimize
         solution = minimize(threeTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')

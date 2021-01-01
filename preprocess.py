@@ -85,7 +85,7 @@ def get_global_from_group(data,nTraj,nT):
     # nt is the number of timepoints per trajectory
     # ntraj is the number of trajectories
     
-    # this is to be inputted into get_snapshots_from_global 
+    # this is to be input into get_snapshots_from_global 
     
     X = np.zeros(data.shape)
     for i in range(0,nTraj):
@@ -105,7 +105,7 @@ def get_rep_stats(data,nTraj,nT):
         stdev[:,i] = np.std(data[:,i*nTraj:i*nTraj+nTraj],axis=1)
     return mean,stdev
 
-def preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=False,save_data=False):
+def preprocess(datadir,reps,ntimepts,ntimeptsModel,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=False,Filter=True,save_data=False):
     start_time = time.time()
     print('---------Preprocessing replicates',reps,'---------')
 
@@ -120,7 +120,10 @@ def preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=
 
     data_c, data_t = get_groups_from_df(np.array(df),sampleLabels) # easy to use to calc stats
 
-    all_reps = [0,1,2] # filter genes based on all replicate statistics. 
+    if Filter:
+        all_reps = [0,1,2] # filter genes based on all replicate statistics. 
+    else:
+        all_reps = reps
 
     # get replicate statistics
     mean_c, stdev_c = get_rep_stats(data_c,len(all_reps),ntimepts)
@@ -130,26 +133,28 @@ def preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=
     keepers_mean = mean_filter(data_c,data_t,mean_cutoff=MEANCUTOFF)
     keepers_cv =  cv_filter(mean_c,stdev_c,mean_t,stdev_t,cv_cutoff=CVCUTOFF)
     keepers = list(set(keepers_mean) & set(keepers_cv))
-    print(len(keepers), 'genes with CV less than', CVCUTOFF, 'and expression greater than', MEANCUTOFF, '(across all replicates)')
+    if Filter:
+        print(len(keepers), 'genes with CV less than', CVCUTOFF, 'and expression greater than', MEANCUTOFF, '(across all replicates)')
 
-    # filter for the desired replicates
-    keep_reps = get_reps(reps,ntimepts)
-    data_c, data_t = data_c[:,keep_reps], data_t[:,keep_reps]
-    # get stats of background subtracted data
+        # filter for the desired replicates
+        keep_reps = get_reps(reps,ntimepts)
+        data_c, data_t = data_c[:,keep_reps], data_t[:,keep_reps]
+        # get stats of background subtracted data
+
     mean_bs, stdev_bs = get_rep_stats(np.maximum(data_t-data_c,0),nreps,ntimepts)
 
     # Filter and start at correct initial condition
-    data_c = data_c[keepers,2*nreps:] # keeping keepers and the first two timepoints are before malathion was input
-    data_t = data_t[keepers,2*nreps:]
-    mean_c, stdev_c = mean_c[keepers,:], stdev_c[keepers,:]
-    mean_t, stdev_t = mean_t[keepers,:], stdev_t[keepers,:]
-    mean_bs, stdev_bs = mean_bs[keepers,:], stdev_bs[keepers,:]
-    geneIDs = [geneIDs[i] for i in keepers]
+    if Filter:
+        data_c = data_c[keepers,2*nreps:] # keeping keepers and the first two timepoints are before malathion was input
+        data_t = data_t[keepers,2*nreps:]
+        mean_c, stdev_c = mean_c[keepers,:], stdev_c[keepers,:]
+        mean_t, stdev_t = mean_t[keepers,:], stdev_t[keepers,:]
+        mean_bs, stdev_bs = mean_bs[keepers,:], stdev_bs[keepers,:]
+        geneIDs = [geneIDs[i] for i in keepers]
 
     # get global snapshot matrices
-    Xc = get_global_from_group(data_c,nreps,ntimepts-2) # for building snapshot matrices
-    Xt = get_global_from_group(data_t,nreps,ntimepts-2)
-    # notice the ntimepts-2, this is bc the model is built from the IC of malathion spiking
+    Xc = get_global_from_group(data_c,nreps,ntimeptsModel) # for building snapshot matrices
+    Xt = get_global_from_group(data_t,nreps,ntimeptsModel)
 
     # subtract the control from the malathion condition
     X = np.maximum(Xt - Xc,0)
@@ -169,11 +174,11 @@ def preprocess(datadir,reps,ntimepts,MEANCUTOFF=0.12,CVCUTOFF=0.1,log=True,norm=
         filenamestr += '_norm'      
 
     if save_data:
-        pickle.dump([X,ntimepts-2,geneIDs,reps], open('data/'+filenamestr+'.pickle', 'wb'))
+        pickle.dump([X,ntimeptsModel,geneIDs,reps], open('data/'+filenamestr+'.pickle', 'wb'))
 
     print(time.time() - start_time, 'seconds')
 
-    return X,ntimepts-2,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs
+    return X,geneIDs,Xc,Xt,mean_c,stdev_c,mean_t,stdev_t,mean_bs,stdev_bs
 
 
 
