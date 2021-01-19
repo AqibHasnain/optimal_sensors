@@ -49,7 +49,7 @@ else:
     maxEpochs = 10
     netParams = [NUM_INPUTS,NUM_HL,NODES_HL,HL_SIZES,NUM_OUTPUTS,BATCH_SIZE,LEARNING_RATE,L2_REG,maxEpochs]
     net_name = '/malathion_fluorescens'
-    A,W,Xpred,Xextrap = trainKO(Net,netParams,X,ntimeptsModel,len(reps),net_name,save_network=True,extrapolate=False)
+    A,Xpred,Xextrap = trainKO(Net,netParams,X,ntimeptsModel,len(reps),net_name,save_network=True,extrapolate=False)
     # now also need to add some geneIDs for the extra observables
     for i in range(NODES_HL):
         geneIDs.append('OBSERVABLE'+str(i))

@@ -166,13 +166,9 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False,extrap_horizon=
     K = net.linears[-1].weight[:].detach().numpy()
     PsiX = (net(testX)['PsiXf']).detach().numpy().T
 
-    # calculate eigenvectors, and values of K
     L, V = np.linalg.eig(K)
     if np.absolute(L).max() > 1.0:
         print('Model is unstable with mod of eigenvalue',np.absolute(L).max())
-    sortLinds = (np.argsort(np.absolute(L)))[::-1]
-    V = V[:,sortLinds]
-    W = np.linalg.inv(V)
 
     # calculate predictions
     PsiXpred = n_step_prediction(K,PsiX,nT,nTraj)
@@ -196,4 +192,4 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False,extrap_horizon=
     plt.xlabel('Epoch');
     plt.savefig(figs_path+net_name+'_Loss.pdf')
 
-    return K,W,PsiXpred,PsiXextrap
+    return K,PsiXpred,PsiXextrap
