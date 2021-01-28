@@ -61,21 +61,14 @@ def mean_filter(control,treatment,mean_cutoff=0.25):
             keepers_mean.append(i)
     return keepers_mean
 
-def cv_filter(control_mean,control_stdev,treatment_mean,treatment_stdev,cv_cutoff=0.3):
+def cv_filter(mean,stdev,cv_cutoff=0.2):
     ''' filter genes with high cv '''
-    CV_c = np.zeros(control_mean.shape)
-    CV_t = np.zeros(treatment_mean.shape)
-    for i in range(control_mean.shape[0]):
-        for j in range(control_mean.shape[1]):
-            CV_c[i,j] = control_stdev[i,j]/control_mean[i,j]
-            CV_t[i,j] = treatment_stdev[i,j]/treatment_mean[i,j]
-
-    CV_c_mean_over_time = np.mean(CV_c,axis=1)
-    CV_t_mean_over_time = np.mean(CV_t,axis=1)
-    keepers_cv = []
-    for i in range(len(CV_c_mean_over_time)):
-        if (CV_c_mean_over_time[i] <= cv_cutoff) and (CV_t_mean_over_time[i] <= cv_cutoff):
-            keepers_cv.append(i)
+    allowCutoffViolation_thresh = int(mean.shape[1]/2)
+    cv = stdev/mean # cv[i,j] gives the cv of the ith gene at the jth timepoint, calculated over all replicates
+    cv_thresh = (cv < cv_cutoff)*cv
+    cv_thresh[cv_thresh > 0.0] = 1
+    cv_thresh_sum = np.sum(cv_thresh,axis=1)
+    keepers_cv = list((np.nonzero((cv_thresh_sum >= allowCutoffViolation_thresh) * cv_thresh_sum))[0])
     return keepers_cv
 
 def get_global_from_group(data,nTraj,nT):
@@ -131,7 +124,8 @@ def preprocess(datadir,reps,ntimepts,ntimeptsModel,MEANCUTOFF=0.12,CVCUTOFF=0.1,
 
     # filter low expression and noisy genes
     keepers_mean = mean_filter(data_c,data_t,mean_cutoff=MEANCUTOFF)
-    keepers_cv =  cv_filter(mean_c,stdev_c,mean_t,stdev_t,cv_cutoff=CVCUTOFF)
+    keepers_cv_c, keepers_cv_t =  cv_filter(mean_c,stdev_c,cv_cutoff=CVCUTOFF),cv_filter(mean_t,stdev_t,cv_cutoff=CVCUTOFF)
+    keepers_cv = list(set(keepers_cv_c) & set(keepers_cv_t))
     keepers = list(set(keepers_mean) & set(keepers_cv))
     if Filter:
         print(len(keepers), 'genes with CV less than', CVCUTOFF, 'and expression greater than', MEANCUTOFF, '(across all replicates)')
