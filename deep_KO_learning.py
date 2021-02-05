@@ -32,24 +32,6 @@ class Net(nn.Module):
         y = torch.cat((torch.Tensor(np.ones((x.shape[0],1))),input_vecs,x),dim=1)
         x = self.linears[-1](y)
         return {'KPsiXp':x,'PsiXf':y} 
-
-def get_snapshot_matrices(X,nT,nTraj): 
-    '''This function assumes the global snapshot matrix is constructed with trajectories 
-        sequentially placed in the columns'''
-    prevInds = [x for x in range(0,nT-1)]
-    forInds = [x for x in range(1,nT)]
-    for i in range(0,nTraj-1):
-        if i == 0:
-            more_prevInds = [x + nT for x in prevInds]
-            more_forInds = [x + nT for x in forInds]
-        else: 
-            more_prevInds = [x + nT for x in more_prevInds]
-            more_forInds = [x + nT for x in more_forInds]
-        prevInds = prevInds + more_prevInds
-        forInds = forInds + more_forInds
-    Xp = X[:,prevInds]
-    Xf = X[:,forInds]
-    return Xp,Xf
     
 def get_paths():
     script_dir = os.path.dirname('deep_KO_learning.py') # getting relative path
@@ -70,37 +52,26 @@ def n_step_prediction(A,X,ntimepts,nreps):
             count += 1
     print(time.time() - start_time, "seconds", "for n-step prediction")
 
-    mse_pred = np.linalg.norm(X - X_pred,2)/(ntimepts-nreps) # minus nreps because initial conditions are given 
-    print(f'MSE for n-step prediction is {mse_pred:.3e}')
-    return X_pred
+    feature_means = np.mean(X,axis=1).reshape(len(X),1)
+    cd = 1 - ((np.linalg.norm(X - X_pred,ord=2)**2)/(np.linalg.norm(X - feature_means,ord=2)**2)) # coeff of determination aka R^2 
+    print(f'Coefficient of determination for n-step prediction is {cd:.3e}')
+    return X_pred,cd
 
-def extrapolate(A,X,extrap_horizon,ntimepts,nreps):
-    print('---------Extrapolating using learned model---------')
-    start_time = time.time()
-    X_extrap = np.zeros((A.shape[0],extrap_horizon*nreps)) 
-    count = 0
-    for i in range(0,nreps):
-        x_test_ic = X[:,i*(ntimepts):i*(ntimepts)+1]
-        for j in range(0,extrap_horizon):
-            X_extrap[:,count:count+1] = np.dot(np.linalg.matrix_power(A,j),x_test_ic) 
-            count += 1
-    print(time.time() - start_time, "seconds for extrapolation")
-    return X_extrap
-
-def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False,extrap_horizon=20,extrapolate=False):
+def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
 
     script_dir,trained_models_path,data_path,figs_path = get_paths()
 
-    Xp,Xf = get_snapshot_matrices(X,nT,nTraj)
+    Xp,Xf = X[:,:-1].reshape(len(X),(nT-1)*nTraj,order='F'), X[:,1:].reshape(len(X),(nT-1)*nTraj,order='F')
+    X = X.reshape(len(X),(nT)*nTraj,order='F')
     trainXp = torch.Tensor(Xp.T)
     trainXf = torch.Tensor(Xf.T)
     testX = torch.Tensor(X.T)
 
-    numDatapoints = nT*nTraj # number of total snapshots
+    numDatapoints = testX.shape[0] # number of total snapshots
 
     print('Dimension of the state: ' + str(trainXp.shape[1]));
     print('Number of trajectories: ' + str(nTraj));
-    print('Number of total snapshots: ' + str(nT*nTraj));
+    print('Number of total snapshots: ' + str(numDatapoints));
 
     NUM_INPUTS,NUM_HL,NODES_HL,HL_SIZES,NUM_OUTPUTS,BATCH_SIZE,LEARNING_RATE,L2_REG,maxEpochs = netParams
 
@@ -171,11 +142,7 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False,extrap_horizon=
         print('Model is unstable with mod of eigenvalue',np.absolute(L).max())
 
     # calculate predictions
-    PsiXpred = n_step_prediction(K,PsiX,nT,nTraj)
-    if extrapolate:
-        PsiXextrap = extrapolate(K,PsiX,extrap_horizon,nT,nTraj)
-    else:
-        PsiXextrap = None
+    PsiXpred,cd = n_step_prediction(K,PsiX,nT-2,nTraj)
 
     print((time.time() - start_time)/60, "minutes for deep Koopman operator learning")
     ### Saving network (hyper)parameters ###
@@ -192,4 +159,4 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False,extrap_horizon=
     plt.xlabel('Epoch');
     plt.savefig(figs_path+net_name+'_Loss.pdf')
 
-    return K,PsiXpred,PsiXextrap
+    return K,PsiXpred,cd
