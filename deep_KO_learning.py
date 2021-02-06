@@ -42,7 +42,7 @@ def get_paths():
 
 def n_step_prediction(A,X,ntimepts,nreps):
     start_time = time.time()
-    print('---------Computing MSE for n-step prediction---------')
+    print('---------Computing R^2 for n-step prediction---------')
     X_pred = np.zeros((A.shape[0],ntimepts*nreps))
     count = 0
     for i in range(0,nreps):
@@ -71,7 +71,7 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
 
     print('Dimension of the state: ' + str(trainXp.shape[1]));
     print('Number of trajectories: ' + str(nTraj));
-    print('Number of total snapshots: ' + str(numDatapoints));
+    print('Number of total snapshots: ' + str(numDatapoints-nTraj));
 
     NUM_INPUTS,NUM_HL,NODES_HL,HL_SIZES,NUM_OUTPUTS,BATCH_SIZE,LEARNING_RATE,L2_REG,maxEpochs = netParams
 
@@ -86,10 +86,10 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
     print('---------Starting training of network---------')
     print("Using PyTorch Version %s" %torch.__version__)
     start_time = time.time()
-    print_less_often = 10
+    print_less_often = 50
     epoch_to_save_net = 100
     lr_update = 0.95
-    eps = 1e-10
+    eps = 1e-11
     train_loss = []
     prev_loss = 0
     curr_loss = 1e10
@@ -98,8 +98,8 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
     while (epoch <= maxEpochs): 
 
         if epoch % print_less_often == 0:
-            if np.abs(prev_loss - curr_loss) < eps:
-                break
+            # if np.abs(prev_loss - curr_loss) < eps:
+                # break
             prev_loss = curr_loss
 
         for i in range(0,trainXp.shape[0],BATCH_SIZE):
@@ -115,8 +115,8 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
         curr_loss = loss.item()
 
         if epoch % print_less_often == 0:
-          print('['+str(epoch)+']'+' loss = '+str(loss.item()))
-          if curr_loss > prev_loss: # update learning rate
+            print('['+str(epoch)+']'+' loss = '+str(loss.item()))
+            if curr_loss > prev_loss: # update learning rate
                 for g in optimizer.param_groups:
                     g['lr'] = LEARNING_RATE * lr_update
                 LEARNING_RATE = g['lr']
@@ -137,12 +137,12 @@ def trainKO(Net,netParams,X,nT,nTraj,net_name,save_network=False):
     K = net.linears[-1].weight[:].detach().numpy()
     PsiX = (net(testX)['PsiXf']).detach().numpy().T
 
-    L, V = np.linalg.eig(K)
+    L = np.linalg.eigvals(K)
     if np.absolute(L).max() > 1.0:
         print('Model is unstable with mod of eigenvalue',np.absolute(L).max())
 
     # calculate predictions
-    PsiXpred,cd = n_step_prediction(K,PsiX,nT-2,nTraj)
+    PsiXpred,cd = n_step_prediction(K,PsiX,nT,nTraj)
 
     print((time.time() - start_time)/60, "minutes for deep Koopman operator learning")
     ### Saving network (hyper)parameters ###

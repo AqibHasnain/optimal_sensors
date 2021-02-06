@@ -117,7 +117,7 @@ def scaler(data,method=MinMaxScaler):
         data_normed[:,:,i] = (scaler.transform(data[:,:,i].T)).T 
     return data_normed + 1.0 # this affine term is to lift the data from 0.0
 
-def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV'):
+def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',filterB4BackSub=False):
     start_time = time.time()
     print('---------Preprocessing replicates',reps,'---------')
 
@@ -130,50 +130,71 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV'):
     data_c, data_t = get_groups_from_df(np.array(df),sampleLabels) 
     data_c, data_t = put_groups_in_3D(data_c,nreps,ntimepts), put_groups_in_3D(data_t,nreps,ntimepts) 
 
-    # filter nonreproducible genes based on chosen criteria (DTW, CV, cosine similarity) 
-    if Filter: # not going to use the first and last timepoints due to anomalous data
+    data_c = data_c[:,1:-1] 
+    data_t = data_t[:,1:-1] # First can get the tps of interest. 
+    newntimepts = data_c.shape[1]
+
+    # filter nonreproducible genes before back sub based on chosen criteria (DTW, CV, mean distance) 
+    if Filter and not filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
         if filterMethod == 'CV': # filter based on coefficient of variation
-            keepers_c,keepers_t = cv_filter(data_c[:,1:-1]),cv_filter(data_t[:,1:-1]) # do we want to remove the first and last tps?
+            keepers_c,keepers_t = cv_filter(data_c),cv_filter(data_t) # do we want to remove the first and last tps?
             keepers_repr = list(set(keepers_c)&set(keepers_t))
         elif filterMethod == 'MD': # filter based on distance from mean. done in pairs of replicates
             repList = [0,1]
-            keepers_c1,keepers_t1 = mean_distance_filter(data_c[:,1:-1],repList),mean_distance_filter(data_t[:,1:-1],repList)
+            keepers_c1,keepers_t1 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
             repList = [0,2]
-            keepers_c2,keepers_t2 = mean_distance_filter(data_c[:,1:-1],repList),mean_distance_filter(data_t[:,1:-1],repList)
+            keepers_c2,keepers_t2 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
             repList = [1,2]
-            keepers_c3,keepers_t3 = mean_distance_filter(data_c[:,1:-1],repList),mean_distance_filter(data_t[:,1:-1],repList)
+            keepers_c3,keepers_t3 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
             keepers_repr = list(set(keepers_c1)&set(keepers_t1)&set(keepers_c2)&set(keepers_t2)&set(keepers_c3)&set(keepers_t3))
         elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
             repList = [0,1]
-            keepers_c1,keepers_t1 = dtw_filter(data_c[:,1:-1],repList),dtw_filter(data_t[:,1:-1],repList)
+            keepers_c1,keepers_t1 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
             repList = [0,2]
-            keepers_c2,keepers_t2 = dtw_filter(data_c[:,1:-1],repList),dtw_filter(data_t[:,1:-1],repList)
+            keepers_c2,keepers_t2 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
             repList = [1,2]
-            keepers_c3,keepers_t3 = dtw_filter(data_c[:,1:-1],repList),dtw_filter(data_t[:,1:-1],repList)
+            keepers_c3,keepers_t3 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
             keepers_repr = list(set(keepers_c1)&set(keepers_t1)&set(keepers_c2)&set(keepers_t2)&set(keepers_c3)&set(keepers_t3))
         print('Keeping',len(keepers_repr),'genes out of',len(df))
-        high_expression_c = num_high_expression(data_c[keepers_repr],ntimepts,nreps)
-        high_expression_t = num_high_expression(data_t[keepers_repr],ntimepts,nreps)
+        high_expression_c = num_high_expression(data_c[keepers_repr],newntimepts,nreps)
+        high_expression_t = num_high_expression(data_t[keepers_repr],newntimepts,nreps)
         print('Number of high expression genes (mean > 100) in control:',high_expression_c,', and in treatment:',high_expression_t)
-
-    data_c = data_c[:,1:-1] 
-    data_t = data_t[:,1:-1] # starting condition is the timepoint after malathion was introduced.
-    newntimepts = data_c.shape[1]
 
     # normalize each gene's time series, not each snapshot!
     if Norm: 
         data_c, data_t = scaler(data_c,method=MinMaxScaler), scaler(data_c,method=MinMaxScaler)
 
-    # subtract the control from the treatment condition
+    # subtract the control from the treatment condition (background subtraction)
     X = np.maximum(data_t - data_c,0)
 
-    # filter out genes which have mean background subtracted expression less than 5
-    # mu = (np.mean(np.mean(X,axis=2),axis=1))
-    # keepers_mu = list(np.nonzero((mu>5)*mu)[0])
+    # filter nonreproducible genes after background subtraction on chosen criteria (DTW, CV, mean distance) 
+    if Filter and filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
+        if filterMethod == 'CV': # filter based on coefficient of variation
+            keepers_repr = cv_filter(X)
+        elif filterMethod == 'MD': # filter based on distance from mean. done in pairs of replicates
+            repList = [0,1]
+            keepers_1 = mean_distance_filter(X,repList)
+            repList = [0,2]
+            keepers_2 = mean_distance_filter(X,repList)
+            repList = [1,2]
+            keepers_3 = mean_distance_filter(X,repList)
+            keepers_repr = list(set(keepers_1)&set(keepers_2)&set(keepers_3))
+        elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
+            dtwThresh = 0.073 # this threshold removes all but 506 genes. 
+            repList = [0,1]
+            keepers_1 = dtw_filter(X,repList,thresh=dtwThresh)
+            repList = [0,2]
+            keepers_2 = dtw_filter(X,repList,thresh=dtwThresh)
+            repList = [1,2]
+            keepers_3 = dtw_filter(X,repList,thresh=dtwThresh)
+            keepers_repr = list(set(keepers_1)&set(keepers_2)&set(keepers_3))
+        print('Keeping',len(keepers_repr),'genes out of',len(df))
+        high_expression_c = num_high_expression(data_c[keepers_repr],newntimepts,nreps)
+        high_expression_t = num_high_expression(data_t[keepers_repr],newntimepts,nreps)
+        print('Number of high expression genes (mean > 100) in control:',high_expression_c,', and in treatment:',high_expression_t)
 
-    # keepers = list(set(keepers_mu)&set(keepers_repr))
-
-    X = X[keepers_repr]
+    if Filter: 
+        X = X[keepers_repr]
 
     print((time.time() - start_time)/60, 'minutes')
 

@@ -26,7 +26,10 @@ def sparsity(A,thresh):
 def dmd(X,ntimepts,nreps,sparse_thresh=2e-3,rank_reduce=False,makeSparse=False,extrapolate=False):
     start_time = time.time()
     print('---------Computing DMD operator---------')
+    print('Dataset dimension',X.shape)
+
     Xp,Xf = X[:,:-1].reshape(len(X),(ntimepts-1)*nreps,order='F'), X[:,1:].reshape(len(X),(ntimepts-1)*nreps,order='F')
+
     if rank_reduce == False:
         A = Xf @ np.linalg.pinv(Xp)
     else: 
