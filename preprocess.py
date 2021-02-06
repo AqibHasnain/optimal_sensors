@@ -117,7 +117,7 @@ def scaler(data,method=MinMaxScaler):
         data_normed[:,:,i] = (scaler.transform(data[:,:,i].T)).T 
     return data_normed + 1.0 # this affine term is to lift the data from 0.0
 
-def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',filterB4BackSub=False):
+def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',filterB4BackSub=True):
     start_time = time.time()
     print('---------Preprocessing replicates',reps,'---------')
 
@@ -135,7 +135,7 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
     newntimepts = data_c.shape[1]
 
     # filter nonreproducible genes before back sub based on chosen criteria (DTW, CV, mean distance) 
-    if Filter and not filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
+    if Filter and filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
         if filterMethod == 'CV': # filter based on coefficient of variation
             keepers_c,keepers_t = cv_filter(data_c),cv_filter(data_t) # do we want to remove the first and last tps?
             keepers_repr = list(set(keepers_c)&set(keepers_t))
@@ -168,7 +168,7 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
     X = np.maximum(data_t - data_c,0)
 
     # filter nonreproducible genes after background subtraction on chosen criteria (DTW, CV, mean distance) 
-    if Filter and filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
+    if Filter and not filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
         if filterMethod == 'CV': # filter based on coefficient of variation
             keepers_repr = cv_filter(X)
         elif filterMethod == 'MD': # filter based on distance from mean. done in pairs of replicates

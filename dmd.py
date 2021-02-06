@@ -21,7 +21,12 @@ def n_step_prediction(A,X,ntimepts,nreps):
 def sparsity(A,thresh):
     start_time = time.time()
     print('---------Forcing sparsity in model with threshhold',thresh,'---------')
-    return (np.absolute(A) > thresh) * A
+    nnonzero = len(np.nonzero(A)[0])
+    sparseA = (np.absolute(A) > thresh) * A
+    nnonzero_sparse = len(np.nonzero(sparseA)[0])
+    percent_nonzero_to_zero = (nnonzero - nnonzero_sparse)/nnonzero
+    print('Percent of nonzero parameters set to zero:',percent_nonzero_to_zero)
+    return sparseA, percent_nonzero_to_zero
 
 def dmd(X,ntimepts,nreps,sparse_thresh=2e-3,rank_reduce=False,makeSparse=False,extrapolate=False):
     start_time = time.time()
@@ -49,11 +54,13 @@ def dmd(X,ntimepts,nreps,sparse_thresh=2e-3,rank_reduce=False,makeSparse=False,e
 
     # make model sparse 
     if makeSparse:
-        A = sparsity(A,sparse_thresh)
+        A, percent_nonzero_to_zero = sparsity(A,sparse_thresh)
+    else: 
+        percent_nonzero_to_zero = 'model was not sparsified'
 
     # calculate prediction accuracy 
     X = X.reshape(len(X),(ntimepts)*nreps,order='F')
     X_pred, cd = n_step_prediction(A,X,ntimepts,nreps)
 
-    return A,X,X_pred,cd
+    return A,percent_nonzero_to_zero,X,cd
 
