@@ -128,10 +128,11 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
     df = df.iloc[:,1:] # first column contains transcriptIDs
 
     data_c, data_t = get_groups_from_df(np.array(df),sampleLabels) 
-    data_c, data_t = put_groups_in_3D(data_c,nreps,ntimepts), put_groups_in_3D(data_t,nreps,ntimepts) 
+    data_c, data_t = put_groups_in_3D(data_c,nreps,ntimepts), put_groups_in_3D(data_t,nreps,ntimepts) # there are 3 replicates in dataset, which explains the hardcoded 3
 
-    data_c = data_c[:,1:-1] 
-    data_t = data_t[:,1:-1] # First can get the tps of interest. 
+    # timepoints and reps to use for parameter fitting
+    data_c = data_c[:,2:-1,reps] 
+    data_t = data_t[:,2:-1,reps] 
     newntimepts = data_c.shape[1]
 
     # filter nonreproducible genes before back sub based on chosen criteria (DTW, CV, mean distance) 
