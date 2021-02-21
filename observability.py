@@ -36,7 +36,8 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,transcriptIDs,IC=0
         x0.append(X[:,IC:IC+1])
         print('Initial objective: ' + str(oneTraj_obj(C0,At,x0,Tf)))
         # optimize
-        solution = minimize(oneTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')
+        bnds = tuple([(0.0,None) for i in range(X.shape[0])]) # C should be nonnegative
+        solution = minimize(oneTraj_obj,C0,args=(At,x0,Tf),method='SLSQP',bounds=bnds)
         C = (solution.x).reshape(1,C0.shape[1])
         # show final objective
         print('Final objective: ' + str(oneTraj_obj(C,At,x0,Tf)))
@@ -47,7 +48,8 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,transcriptIDs,IC=0
             x0.append(X[:,i*ntimepts+IC:i*ntimepts+1+IC])
         print('Initial objective: ' + str(twoTraj_obj(C0,At,x0,Tf)))
         # optimize
-        solution = minimize(twoTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')
+        bnds = tuple([(0.0,None) for i in range(X.shape[0])]) # C should be nonnegative
+        solution = minimize(twoTraj_obj,C0,args=(At,x0,Tf),method='SLSQP',bounds=bnds)
         C = (solution.x).reshape(1,C0.shape[1])
         # show final objective
         print('Final objective: ' + str(twoTraj_obj(C,At,x0,Tf)))
@@ -58,7 +60,8 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,transcriptIDs,IC=0
             x0.append(X[:,i*ntimepts+IC:i*ntimepts+1+IC])
         print('Initial objective: ' + str(threeTraj_obj(C0,At,x0,Tf)))
         # optimize
-        solution = minimize(threeTraj_obj,C0,args=(At,x0,Tf),method='SLSQP')
+        bnds = tuple([(0.0,None) for i in range(X.shape[0])]) # C should be nonnegative
+        solution = minimize(threeTraj_obj,C0,args=(At,x0,Tf),method='SLSQP',bounds=bnds)
         C = (solution.x).reshape(1,C0.shape[1])
         # show final objective
         print('Final objective: ' + str(threeTraj_obj(C,At,x0,Tf)))

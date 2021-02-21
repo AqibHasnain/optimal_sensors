@@ -9,7 +9,7 @@ import sys
 
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
 datadir = 'data/tpm.csv'
-saveResults = False # save pickle file with data (filtered&sliced) & model output 
+saveResults = True # save pickle file with data (filtered&sliced) & model output 
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
 doSparse = False # if True, induce sparsity via sparsity threshold on the entries of A
