@@ -96,16 +96,16 @@ def get_promoterregions(datatable,intergenic_records,genbank_path,rel_dist_thres
                 if new_dist >= 0: # Case 1 for strand -1, downstream constraint is naturally satisfied
                     if new_dist < dist:
                         dist = new_dist
-                        promoter_seq = feature.seq
-                        ign_start = intergenic_location[0]
-                        ign_end = intergenic_location[1]
+                        promoter_seq = feature.seq.reverse_complement()
+                        ign_start = intergenic_location[1]
+                        ign_end = intergenic_location[0]
                 elif new_dist < 0: # Case 2 for strand -1, downstream constraint enforced using rel_dist
                     if rel_dist < rel_dist_thresh:
                         if rel_dist < dist:
                             dist = rel_dist
-                            promoter_seq = feature.seq
-                            ign_start = intergenic_location[0]
-                            ign_end = intergenic_location[1]
+                            promoter_seq = feature.seq.reverse_complement()
+                            ign_start = intergenic_location[1]
+                            ign_end = intergenic_location[0]
         
         promoter_records.append(SeqRecord(promoter_seq,id="%s_%d"%(datatable.locus_tags[i],i),\
                     description="%d-%d"%(ign_start,ign_end),name="%s%s"%('Promoter sequence for ',datatable.locus_tags[i]),))
