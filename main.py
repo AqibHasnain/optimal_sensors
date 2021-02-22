@@ -12,20 +12,19 @@ datadir = 'data/tpm.csv'
 saveResults = True # save pickle file with data (filtered&sliced) & model output 
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
-doSparse = False # if True, induce sparsity via sparsity threshold on the entries of A
+doSparse = True # if True, induce sparsity via sparsity threshold on the entries of A
 if doSparse:
     sparseThresh = 3e-3 # 2e-3
 else:
     sparseThresh = 0.0
-doReduce = False # if True, reduce dimension of model to min(m,n) where m is numtimepoints and n is dim of state
+doReduce = True # if True, reduce dimension of model to min(m,n) where m is numtimepoints and n is dim of state
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment (tpm.csv)
 doFilter = True # set this to False if you don't want to remove any genes from the analysis
 filter_method = 'DTW' # 'CV', 'MD', or 'DTW'
 doFilterB4BackSub = True
 doNorm = False # set this to True to normalize data before filtering
 if len(sys.argv) < 2:
-    reps = [0,1,2] # if not specifying reps from command line, put reps to use in list here
-    # TO_DO: UPDATE PREPROCESSING AND POSSIBLY DMD, DEEPKOLEARNING TO PROPERLY HANDLE THE CASE WHERE WE DON'T WANT TO LOOK AT ALL REPS
+    reps = [0,2] # if not specifying reps from command line, put reps to use in list here
 else:
     reps = sys.argv[1]
     reps = list(reps.strip('[]').split(','))

@@ -6,6 +6,7 @@ import time
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from fastdtw import fastdtw # dynamic time warping distance
 from scipy.spatial.distance import euclidean # needed for fastdtw package
+from itertools import combinations
 
 
 ''' The df that is imported in the preprocess function has the following structure
@@ -76,29 +77,14 @@ def cv_filter(data,cv_cutoff=0.148,violationAllowance=9):
     keepers.sort()
     return keepers
 
-def dtw_filter(data,reps,thresh=0.00095):
+def dtw_filter(data,thresh=0.00095):
     '''Dynamic time warping distance between a gene's time series measured over two replicates'''
     keepers = []
     for i in range(0,len(data)):
-        distance,path = fastdtw(data[i,:,reps[0]],data[i,:,reps[1]],dist=euclidean)
-        distance /= (np.linalg.norm(data[i,:,reps[0]],ord=2)*np.linalg.norm(data[i,:,reps[1]],ord=2))
+        distance,path = fastdtw(data[i,:,0],data[i,:,1],dist=euclidean)
+        distance /= (np.linalg.norm(data[i,:,0],ord=2)*np.linalg.norm(data[i,:,1],ord=2))
         if distance <= thresh: 
             keepers.append(i)
-    keepers.sort()
-    return keepers
-
-def mean_distance_filter(data,reps,thresh=0.0142):
-    ''' mod(||x_i^(r1)-0.5*(x_i^(r1)+x_i^(r2))|| / ||x_i^(r1)|| -
-            ||x_i^(r2)-0.5*(x_i^(r2)+x_i^(r1))|| / ||x_i^(r2)||)
-    x_i is the time trace of gene i, and data is of shape n x m x r
-    reps is a list of two indices corresponding to replicates to be compared'''
-    dist1 = np.linalg.norm(data[:,:,reps[0]] - 0.5*(data[:,:,reps[0]] + data[:,:,reps[1]]),ord=2,axis=1) / \
-                np.linalg.norm(data[:,:,reps[0]],ord=2,axis=1)
-    dist2 = np.linalg.norm(data[:,:,reps[1]] - 0.5*(data[:,:,reps[1]] + data[:,:,reps[0]]),ord=2,axis=1) / \
-                np.linalg.norm(data[:,:,reps[1]],ord=2,axis=1)
-    dist = np.abs(dist1 - dist2)
-    keepers_tmp = (dist < thresh) * dist
-    keepers = list(np.nonzero(keepers_tmp)[0])
     keepers.sort()
     return keepers
 
@@ -117,12 +103,58 @@ def scaler(data,method=MinMaxScaler):
         data_normed[:,:,i] = (scaler.transform(data[:,:,i].T)).T 
     return data_normed + 1.0 # this affine term is to lift the data from 0.0
 
+def apply_filter_before_backsub(data_c,data_t,reps,filterMethod): 
+    repList = []
+    for repcomb in combinations(reps,2): # get lists of all possible length 2 combinations of the replicates being used
+        repList.append(list(repcomb)) # if reps=[0,1,2], repList = [[0,1],[0,2],[1,2]]
+    if filterMethod == 'CV': # filter based on coefficient of variation
+        keepers_c,keepers_t = cv_filter(data_c),cv_filter(data_t) # do we want to remove the first and last tps?
+        keepers_repr = list(set(keepers_c)&set(keepers_t))
+    elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
+        keepers_c_r = []
+        if len(reps) == 3: 
+            for these_reps in repList:
+                keepers_c_r.append(dtw_filter(data_c[:,:,these_reps]))
+                keepers_c_r.append(dtw_filter(data_t[:,:,these_reps]))
+            keepers_c_r = [set(k) for k in keepers_c_r]
+            keepers_repr = list(set.intersection(*keepers_c_r))
+        elif len(reps) == 2: 
+            keepers_c_r.append(dtw_filter(data_c))
+            keepers_c_r.append(dtw_filter(data_t))
+            keepers_c_r = [set(k) for k in keepers_c_r]
+            keepers_repr = list(set.intersection(*keepers_c_r))
+    print('Keeping',len(keepers_repr),'genes out of',len(data_c))
+    return keepers_repr
+
+def apply_filter_after_backsub(data,reps,filterMethod): 
+    repList = []
+    for repcomb in combinations(reps,2): # get lists of all possible length 2 combinations of the replicates being used
+        repList.append(list(repcomb)) # if reps=[0,1,2], repList = [[0,1],[0,2],[1,2]]
+    if filterMethod == 'CV': # filter based on coefficient of variation
+        keepers_repr = cv_filter(data)
+    elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
+        dtwThresh = 0.073 # this threshold removes all but 506 genes. 
+        keepers_c_r = []
+        if len(reps) == 3: 
+            for these_reps in repList:
+                keepers_c_r.append(dtw_filter(data_c[:,:,these_reps]))
+                keepers_c_r.append(dtw_filter(data_t[:,:,these_reps]))
+            keepers_c_r = [set(k) for k in keepers_c_r]
+            keepers_repr = list(set.intersection(*keepers_c_r))
+        elif len(reps) == 2: 
+            keepers_c_r.append(dtw_filter(data_c))
+            keepers_c_r.append(dtw_filter(data_t))
+            keepers_c_r = [set(k) for k in keepers_c_r]
+            keepers_repr = list(set.intersection(*keepers_c_r))
+    print('Keeping',len(keepers_repr),'genes out of',len(data))
+    return keepers_repr
+
 def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',filterB4BackSub=True):
     start_time = time.time()
     print('---------Preprocessing replicates',reps,'---------')
 
     df = pd.read_csv(datadir)
-    nreps = len(reps)
+    nreps = 3 # number of replicates in the P. fluorescens malathion dataset
     sampleLabels = list(df.columns[1:])
     transcriptIDs = list(df.iloc[:,0])
     df = df.iloc[:,1:] # first column contains transcriptIDs
@@ -131,35 +163,14 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
     data_c, data_t = put_groups_in_3D(data_c,nreps,ntimepts), put_groups_in_3D(data_t,nreps,ntimepts) # there are 3 replicates in dataset, which explains the hardcoded 3
 
     # timepoints and reps to use for parameter fitting
-    data_c = data_c[:,2:-1,reps] 
+    print(data_c.shape,data_t.shape)
+    data_c = data_c[:,2:-1,reps] # not going to use the first and last timepoints due to anomalous data
     data_t = data_t[:,2:-1,reps] 
     newntimepts = data_c.shape[1]
 
     # filter nonreproducible genes before back sub based on chosen criteria (DTW, CV, mean distance) 
-    if Filter and filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
-        if filterMethod == 'CV': # filter based on coefficient of variation
-            keepers_c,keepers_t = cv_filter(data_c),cv_filter(data_t) # do we want to remove the first and last tps?
-            keepers_repr = list(set(keepers_c)&set(keepers_t))
-        elif filterMethod == 'MD': # filter based on distance from mean. done in pairs of replicates
-            repList = [0,1]
-            keepers_c1,keepers_t1 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
-            repList = [0,2]
-            keepers_c2,keepers_t2 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
-            repList = [1,2]
-            keepers_c3,keepers_t3 = mean_distance_filter(data_c,repList),mean_distance_filter(data_t,repList)
-            keepers_repr = list(set(keepers_c1)&set(keepers_t1)&set(keepers_c2)&set(keepers_t2)&set(keepers_c3)&set(keepers_t3))
-        elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
-            repList = [0,1]
-            keepers_c1,keepers_t1 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
-            repList = [0,2]
-            keepers_c2,keepers_t2 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
-            repList = [1,2]
-            keepers_c3,keepers_t3 = dtw_filter(data_c,repList),dtw_filter(data_t,repList)
-            keepers_repr = list(set(keepers_c1)&set(keepers_t1)&set(keepers_c2)&set(keepers_t2)&set(keepers_c3)&set(keepers_t3))
-        print('Keeping',len(keepers_repr),'genes out of',len(df))
-        high_expression_c = num_high_expression(data_c[keepers_repr],newntimepts,nreps)
-        high_expression_t = num_high_expression(data_t[keepers_repr],newntimepts,nreps)
-        print('Number of high expression genes (mean > 100) in control:',high_expression_c,', and in treatment:',high_expression_t)
+    if Filter and filterB4BackSub: 
+        keepers_repr = apply_filter_before_backsub(data_c,data_t,reps,filterMethod)
 
     # normalize each gene's time series, not each snapshot!
     if Norm: 
@@ -169,30 +180,8 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
     X = np.maximum(data_t - data_c,0)
 
     # filter nonreproducible genes after background subtraction on chosen criteria (DTW, CV, mean distance) 
-    if Filter and not filterB4BackSub: # not going to use the first and last timepoints due to anomalous data
-        if filterMethod == 'CV': # filter based on coefficient of variation
-            keepers_repr = cv_filter(X)
-        elif filterMethod == 'MD': # filter based on distance from mean. done in pairs of replicates
-            repList = [0,1]
-            keepers_1 = mean_distance_filter(X,repList)
-            repList = [0,2]
-            keepers_2 = mean_distance_filter(X,repList)
-            repList = [1,2]
-            keepers_3 = mean_distance_filter(X,repList)
-            keepers_repr = list(set(keepers_1)&set(keepers_2)&set(keepers_3))
-        elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
-            dtwThresh = 0.073 # this threshold removes all but 506 genes. 
-            repList = [0,1]
-            keepers_1 = dtw_filter(X,repList,thresh=dtwThresh)
-            repList = [0,2]
-            keepers_2 = dtw_filter(X,repList,thresh=dtwThresh)
-            repList = [1,2]
-            keepers_3 = dtw_filter(X,repList,thresh=dtwThresh)
-            keepers_repr = list(set(keepers_1)&set(keepers_2)&set(keepers_3))
-        print('Keeping',len(keepers_repr),'genes out of',len(df))
-        high_expression_c = num_high_expression(data_c[keepers_repr],newntimepts,nreps)
-        high_expression_t = num_high_expression(data_t[keepers_repr],newntimepts,nreps)
-        print('Number of high expression genes (mean > 100) in control:',high_expression_c,', and in treatment:',high_expression_t)
+    if Filter and not filterB4BackSub:
+        keepers_repr = apply_filter_after_backsub(data,reps,filterMethod)
 
     if Filter: 
         X = X[keepers_repr]
