@@ -178,6 +178,8 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
 
     # subtract the control from the treatment condition (background subtraction)
     X = np.maximum(data_t - data_c,0)
+    # X = np.maximum(data_c - data_t,0)
+    # X = (data_t - data_c)
 
     # filter nonreproducible genes after background subtraction on chosen criteria (DTW, CV, mean distance) 
     if Filter and not filterB4BackSub:

@@ -24,7 +24,7 @@ filter_method = 'DTW' # 'CV', 'MD', or 'DTW'
 doFilterB4BackSub = True
 doNorm = False # set this to True to normalize data before filtering
 if len(sys.argv) < 2:
-    reps = [0,2] # if not specifying reps from command line, put reps to use in list here
+    reps = [0,1,2] # if not specifying reps from command line, put reps to use in list here
 else:
     reps = sys.argv[1]
     reps = list(reps.strip('[]').split(','))
@@ -59,14 +59,16 @@ else:
     for i in range(NODES_HL):
         transcriptIDs.append('OBSERVABLE'+str(i))
 
-if len(sys.argv) < 2:
+if len(sys.argv) <= 3 :
     Tf = newntimepts-1 # finite-horizon for optimization, if not specifying horizon from command line
     ic = 0 # what initial condition should the optimization start with? default is t=0, the actual IC. 
 else:
-    Tf = int(sys.argv[2])
-    ic = int(sys.argv[3])
+    Tf = int(sys.argv[3])
+    ic = int(sys.argv[4])
+
 keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
 C = energy_maximization_single_output(newX,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
+
 
 if saveResults:
     datadict = {'filter_method':filter_method,\
@@ -98,7 +100,13 @@ if saveResults:
         namestr += '_filterAfterBS_'+str(filter_method)
     namestr += '_IC'+str(ic)+'_m'+str(Tf)
 
+    if len(sys.argv) >= 2:
+        namestr += '_'+str(sys.argv[2])
+
     pickle.dump(datadict, open('run-outputs/dump'+namestr+'.pickle', 'wb'))
+
+
+
 
 print('\n')
 

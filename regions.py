@@ -112,3 +112,27 @@ def get_promoterregions(datatable,intergenic_records,genbank_path,rel_dist_thres
 
     return promoter_records
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
