@@ -77,7 +77,8 @@ def cv_filter(data,cv_cutoff=0.148,violationAllowance=9):
     keepers.sort()
     return keepers
 
-def dtw_filter(data,thresh=0.00095):
+def dtw_filter(data,thresh=0.0095):
+    # thresh = 0.00095 results in 506 genes
     '''Dynamic time warping distance between a gene's time series measured over two replicates'''
     keepers = []
     for i in range(0,len(data)):
