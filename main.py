@@ -67,7 +67,7 @@ else:
     ic = int(sys.argv[4])
 
 keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
-C = energy_maximization_single_output(newX,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
+C,C0 = energy_maximization_single_output(newX,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
 
 if saveResults:
@@ -85,7 +85,8 @@ if saveResults:
             'percent_nonzero_to_zero':percent_nonzero_to_zero,\
             'cd':cd,\
             'C':C,\
-            'opt_horizon':(ic,Tf)}
+            'opt_horizon':(ic,Tf),\
+            'C0':C0}
 
     namestr = ''
     for i in range(len(reps)):

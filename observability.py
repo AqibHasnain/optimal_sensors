@@ -26,7 +26,7 @@ def threeTraj_obj(x,At,x0,T):
 def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,transcriptIDs,IC=0):    
     print('------Optimizing for Optimal State Observer------')
     start_time = time.time()
-    C0 = np.random.uniform(0.0,1000.0,size=(1,len(A)))
+    C0 = np.random.normal(4000,1000.0,size=(1,len(A))) # still trying out various initializations to see what is optimal 
     At = []
     for i in range(0,Tf+1):
         At.append(np.linalg.matrix_power(A,i))
@@ -70,7 +70,7 @@ def energy_maximization_single_output(X,A,ntimepts,repnums,Tf,transcriptIDs,IC=0
     # idx_maxEnergy = np.flip(C[:,0].argsort()[-100:]) # get indices of 100 max elements of C
     # maxEnergy_geneIDs = [geneIDs[i] for i in idx_maxEnergy]
     print((time.time() - start_time)/60, 'minutes')
-    return C
+    return C,C0
 
 
 
