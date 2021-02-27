@@ -14,7 +14,8 @@ python3 main.py [0,1,2] run7 | tee -a log.txt
 python3 main.py [0,1,2] run8 | tee -a log.txt
 python3 main.py [0,1,2] run9 | tee -a log.txt
 python3 main.py [0,1,2] run10 | tee -a log.txt 
-python3 main.py [0,1,2] run11 | tee - log.txt
+python3 main.py [0,1,2] run11 | tee -a log.txt
+python3 main.py [0,1,2] run12 | tee -a log.txt
 
 # first argument is the reps to use and the second is the horizon for optimization 
 # python3 main.py [0] 2 0
