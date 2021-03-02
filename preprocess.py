@@ -65,7 +65,8 @@ def put_groups_in_3D(data,nTraj,nT):
         X[:,:,i] = data[:,get_reps([i],nT)]
     return X
 
-def cv_filter(data,cv_cutoff=0.148,violationAllowance=9):
+def cv_filter(data,cv_cutoff=0.25,violationAllowance=6):
+    # cv_cutoff of 0.148 results in 500 genes, 0.25 gives 3000 genes
     '''data is of shape n x m x r'''
     mean = np.mean(data,axis=2)
     stdev = np.std(data,axis=2)
