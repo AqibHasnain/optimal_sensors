@@ -8,7 +8,7 @@ import sys
 
 
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
-datadir = 'data/tpm.csv'
+datadir = 'data/tpm_no_ribo.csv'
 saveResults = True # save pickle file with data (filtered&sliced) & model output 
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
@@ -67,30 +67,23 @@ else:
     ic = int(sys.argv[4])
 
 keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
+
 C,C0 = energy_maximization_single_output(newX,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
 
 if saveResults:
-    datadict = {'filter_method':filter_method,\
-            'filterBeforeBS':str(doFilterB4BackSub),\
-            'norm':str(doNorm),\
-            'reps':reps,\
-            'ntimepts':ntimepts,\
-            'sparseThresh':sparseThresh,\
-            'X':X,\
-            'newntimepts':newntimepts,\
+    datadict = {'X':X,\
             'transcriptIDs':transcriptIDs,\
             'keepers':keepers,\
             'A':A,\
-            'percent_nonzero_to_zero':percent_nonzero_to_zero,\
-            'cd':cd,\
             'C':C,\
-            'opt_horizon':(ic,Tf),\
             'C0':C0}
 
     namestr = ''
     for i in range(len(reps)):
         namestr += str(reps[i])
+    if doNorm:
+        namestr += '_norm'
     if doSparse:
         namestr += '_sparse'+str(sparseThresh)
     if doReduce:
