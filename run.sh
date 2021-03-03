@@ -11,15 +11,15 @@ mkdir run-outputs/${dir}
 python3 main.py [0,1,2] run1 ${dir} | tee -a log.txt
 python3 main.py [0,1,2] run2 ${dir} | tee -a log.txt
 python3 main.py [0,1,2] run3 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run4 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run5 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run6 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run7 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run8 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run9 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run10 ${dir} | tee -a log.txt 
-python3 main.py [0,1,2] run11 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run12 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run4 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run5 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run6 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run7 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run8 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run9 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run10 ${dir} | tee -a log.txt 
+# python3 main.py [0,1,2] run11 ${dir} | tee -a log.txt
+# python3 main.py [0,1,2] run12 ${dir} | tee -a log.txt
 
 # first argument is the reps to use and the second is the horizon for optimization 
 # python3 main.py [0] 2 0
