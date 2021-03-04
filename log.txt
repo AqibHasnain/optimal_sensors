@@ -1,60 +1,60 @@
 ---------Preprocessing replicates [0, 1, 2] ---------
 (4261, 12, 3) (4261, 12, 3)
-Keeping 2025 genes out of 4261
-0.5506360093752544 minutes
+Keeping 2041 genes out of 4261
+0.2314846952756246 minutes
 ---------Computing DMD operator---------
-Dataset dimension (2025, 9, 3)
-0.08027219772338867 minutes for DMD
+Dataset dimension (2041, 9, 3)
+0.05318200985590617 minutes for DMD
 ---------Forcing sparsity in model with threshhold 0.003 ---------
-Percent of nonzero parameters set to zero: 0.9446857920860182
+Percent of nonzero parameters set to zero: 0.9435578480445335
 ---------Computing R^2 for n-step prediction---------
-4.258188724517822 seconds for n-step prediction
-Coefficient of determination for n-step prediction is 9.542e-01
+2.6986730098724365 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.676e-01
 ------Optimizing for Optimal State Observer------
 ------Using three trajectories------
-Initial objective: -2228962866.470698
-Final objective: -104162997287104.98
-14.553146501382193 minutes
-run-outputs/X2/dump012_sparse0.003_reduced_filterB4BS_DTW_IC0_m8_run1.pickle
+Initial objective: -2215247873.313934
+Final objective: -2212751744091.408
+6.083251742521922 minutes
+run-outputs/X3/dump012_sparse0.003_reduced_filterAfterBS_DTW_IC0_m8_run1.pickle
 
 
 ---------Preprocessing replicates [0, 1, 2] ---------
 (4261, 12, 3) (4261, 12, 3)
-Keeping 2025 genes out of 4261
-0.5158940116564433 minutes
+Keeping 2041 genes out of 4261
+0.2266526222229004 minutes
 ---------Computing DMD operator---------
-Dataset dimension (2025, 9, 3)
-0.11140814622243246 minutes for DMD
+Dataset dimension (2041, 9, 3)
+0.05446815888086955 minutes for DMD
 ---------Forcing sparsity in model with threshhold 0.003 ---------
-Percent of nonzero parameters set to zero: 0.9446857920860182
+Percent of nonzero parameters set to zero: 0.9435578480445335
 ---------Computing R^2 for n-step prediction---------
-4.479833364486694 seconds for n-step prediction
-Coefficient of determination for n-step prediction is 9.542e-01
+2.861423969268799 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.676e-01
 ------Optimizing for Optimal State Observer------
 ------Using three trajectories------
-Initial objective: -2283878134.791997
-Final objective: -4475046177448.803
-32.082831466197966 minutes
-run-outputs/X2/dump012_sparse0.003_reduced_filterB4BS_DTW_IC0_m8_run2.pickle
+Initial objective: -2184444170.0322313
+Final objective: -79416492681577.19
+8.764172534147898 minutes
+run-outputs/X3/dump012_sparse0.003_reduced_filterAfterBS_DTW_IC0_m8_run2.pickle
 
 
 ---------Preprocessing replicates [0, 1, 2] ---------
 (4261, 12, 3) (4261, 12, 3)
-Keeping 2025 genes out of 4261
-0.519946563243866 minutes
+Keeping 2041 genes out of 4261
+0.22587870359420775 minutes
 ---------Computing DMD operator---------
-Dataset dimension (2025, 9, 3)
-0.09932132562001546 minutes for DMD
+Dataset dimension (2041, 9, 3)
+0.04872350692749024 minutes for DMD
 ---------Forcing sparsity in model with threshhold 0.003 ---------
-Percent of nonzero parameters set to zero: 0.9446857920860182
+Percent of nonzero parameters set to zero: 0.9435578480445335
 ---------Computing R^2 for n-step prediction---------
-3.5560433864593506 seconds for n-step prediction
-Coefficient of determination for n-step prediction is 9.542e-01
+2.6249639987945557 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.676e-01
 ------Optimizing for Optimal State Observer------
 ------Using three trajectories------
-Initial objective: -2178803821.471739
-Final objective: -313474815754634.25
-14.79578097263972 minutes
-run-outputs/X2/dump012_sparse0.003_reduced_filterB4BS_DTW_IC0_m8_run3.pickle
+Initial objective: -2215021697.7893205
+Final objective: -42713704751621.74
+6.088185342152913 minutes
+run-outputs/X3/dump012_sparse0.003_reduced_filterAfterBS_DTW_IC0_m8_run3.pickle
 
 
