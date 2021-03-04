@@ -2,7 +2,7 @@
 
 rm log.txt
 rm nohup.out
-dir='X2'
+dir='X3'
 mkdir run-outputs/${dir}
 
 # the inputs to main.py are the replicates to run the optimizations with. 

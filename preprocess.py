@@ -65,7 +65,7 @@ def put_groups_in_3D(data,nTraj,nT):
         X[:,:,i] = data[:,get_reps([i],nT)]
     return X
 
-def cv_filter(data,cv_cutoff=0.25,violationAllowance=6):
+def cv_filter(data,cv_cutoff=0.2,violationAllowance=6):
     # cv_cutoff of 0.148 results in 500 genes, 0.25 gives 3000 genes
     '''data is of shape n x m x r'''
     mean = np.mean(data,axis=2)
@@ -78,7 +78,7 @@ def cv_filter(data,cv_cutoff=0.25,violationAllowance=6):
     keepers.sort()
     return keepers
 
-def dtw_filter(data,thresh=0.0075):
+def dtw_filter(data,thresh=0.4):
 
     # thresh = 0.00095 results in 506 genes, 0.0095 - 2200 genes, 0.002 - 920 genes
     '''Dynamic time warping distance between a gene's time series measured over two replicates'''
@@ -114,18 +114,18 @@ def apply_filter_before_backsub(data_c,data_t,reps,filterMethod):
         keepers_c,keepers_t = cv_filter(data_c),cv_filter(data_t) # do we want to remove the first and last tps?
         keepers_repr = list(set(keepers_c)&set(keepers_t))
     elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
-        keepers_c_r = []
+        keepers_r = []
         if len(reps) == 3: 
             for these_reps in repList:
-                keepers_c_r.append(dtw_filter(data_c[:,:,these_reps]))
-                keepers_c_r.append(dtw_filter(data_t[:,:,these_reps]))
-            keepers_c_r = [set(k) for k in keepers_c_r]
-            keepers_repr = list(set.intersection(*keepers_c_r))
+                keepers_r.append(dtw_filter(data_c[:,:,these_reps]))
+                keepers_r.append(dtw_filter(data_t[:,:,these_reps]))
+            keepers_r = [set(k) for k in keepers_r]
+            keepers_repr = list(set.intersection(*keepers_r))
         elif len(reps) == 2: 
-            keepers_c_r.append(dtw_filter(data_c))
-            keepers_c_r.append(dtw_filter(data_t))
-            keepers_c_r = [set(k) for k in keepers_c_r]
-            keepers_repr = list(set.intersection(*keepers_c_r))
+            keepers_r.append(dtw_filter(data_c))
+            keepers_r.append(dtw_filter(data_t))
+            keepers_r = [set(k) for k in keepers_r]
+            keepers_repr = list(set.intersection(*keepers_r))
     print('Keeping',len(keepers_repr),'genes out of',len(data_c))
     return keepers_repr
 
@@ -137,18 +137,16 @@ def apply_filter_after_backsub(data,reps,filterMethod):
         keepers_repr = cv_filter(data)
     elif filterMethod == 'DTW': # filter based on dynamic time warping distance. done in pairs of replicates
         dtwThresh = 0.073 # this threshold removes all but 506 genes. 
-        keepers_c_r = []
+        keepers_r = []
         if len(reps) == 3: 
             for these_reps in repList:
-                keepers_c_r.append(dtw_filter(data_c[:,:,these_reps]))
-                keepers_c_r.append(dtw_filter(data_t[:,:,these_reps]))
-            keepers_c_r = [set(k) for k in keepers_c_r]
-            keepers_repr = list(set.intersection(*keepers_c_r))
+                keepers_r.append(dtw_filter(data[:,:,these_reps]))
+            keepers_r = [set(k) for k in keepers_r]
+            keepers_repr = list(set.intersection(*keepers_r))
         elif len(reps) == 2: 
-            keepers_c_r.append(dtw_filter(data_c))
-            keepers_c_r.append(dtw_filter(data_t))
-            keepers_c_r = [set(k) for k in keepers_c_r]
-            keepers_repr = list(set.intersection(*keepers_c_r))
+            keepers_r.append(dtw_filter(data_c))
+            keepers_r = [set(k) for k in keepers_r]
+            keepers_repr = list(set.intersection(*keepers_r))
     print('Keeping',len(keepers_repr),'genes out of',len(data))
     return keepers_repr
 
@@ -186,7 +184,7 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
 
     # filter nonreproducible genes after background subtraction on chosen criteria (DTW, CV, mean distance) 
     if Filter and not filterB4BackSub:
-        keepers_repr = apply_filter_after_backsub(data,reps,filterMethod)
+        keepers_repr = apply_filter_after_backsub(X,reps,filterMethod)
 
     if Filter: 
         X = X[keepers_repr]
