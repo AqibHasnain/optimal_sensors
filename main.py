@@ -3,9 +3,8 @@ from preprocess import *
 from dmd import *
 from observability import *
 from deep_KO_learning import *
-import pickle
+from compress_pickle import dump, load
 import sys
-
 
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
 datadir = 'data/tpm_no_ribo.csv'
@@ -21,7 +20,7 @@ doReduce = True # if True, reduce dimension of model to min(m,n) where m is numt
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment (tpm.csv)
 doFilter = True # set this to False if you don't want to remove any genes from the analysis
 filter_method = 'DTW' # 'CV', 'MD', or 'DTW'
-doFilterB4BackSub = False
+doFilterB4BackSub = True
 doNorm = False # set this to True to normalize data before filtering
 if len(sys.argv) < 2:
     reps = [0,1,2] # if not specifying reps from command line, put reps to use in list here
@@ -100,8 +99,8 @@ if saveResults:
     if len(sys.argv) >= 4:
     	savedir += '/'+str(sys.argv[3])
 
-    fn = savedir+'/dump'+namestr+'.pickle'
-    pickle.dump(datadict, open(fn, 'wb'))
+    fn = savedir+'/dump'+namestr+'.gz'
+    dump(datadict, fn)
 
 print(fn)
 print('\n')

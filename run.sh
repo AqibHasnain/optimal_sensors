@@ -1,23 +1,22 @@
 #!/bin/bash
 
-rm log.txt
 rm nohup.out
-dir='X3'
+dir='X5'
 mkdir run-outputs/${dir}
 
 # the inputs to main.py are the replicates to run the optimizations with. 
 # python3 main.py [0,1,2] run0 #| tee -a log.txt
 
-python3 main.py [0,1,2] run1 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run2 ${dir} | tee -a log.txt
-python3 main.py [0,1,2] run3 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run4 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run5 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run6 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run7 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run8 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run9 ${dir} | tee -a log.txt
-# python3 main.py [0,1,2] run10 ${dir} | tee -a log.txt 
+python3 main.py [0,1,2] run1 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run2 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run3 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run4 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run5 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run6 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run7 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run8 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run9 ${dir} | tee -a run-outputs/${dir}/log.txt
+python3 main.py [0,1,2] run10 ${dir} | tee -a run-outputs/${dir}/log.txt 
 # python3 main.py [0,1,2] run11 ${dir} | tee -a log.txt
 # python3 main.py [0,1,2] run12 ${dir} | tee -a log.txt
 
