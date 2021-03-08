@@ -19,7 +19,7 @@ else:
 doReduce = True # if True, reduce dimension of model to min(m,n) where m is numtimepoints and n is dim of state
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment (tpm.csv)
 doFilter = True # set this to False if you don't want to remove any genes from the analysis
-filter_method = 'DTW' # 'CV', 'MD', or 'DTW'
+filter_method = 'DTW' # 'CV' or 'DTW'
 doFilterB4BackSub = True
 doNorm = False # set this to True to normalize data before filtering
 if len(sys.argv) < 2:

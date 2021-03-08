@@ -165,7 +165,7 @@ def preprocess(datadir,reps,ntimepts,Norm=False,Filter=True,filterMethod='CV',fi
 
     # timepoints and reps to use for parameter fitting
     print(data_c.shape,data_t.shape)
-    data_c = data_c[:,2:-1,reps] # not going to use the first and last timepoints due to anomalous data
+    data_c = data_c[:,2:-1,reps] # not going to use the first and last timepoints due to anomalous behavior
     data_t = data_t[:,2:-1,reps] 
     newntimepts = data_c.shape[1]
 
