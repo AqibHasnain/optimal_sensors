@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rm nohup.out
-dir='X5'
+dir='X6'
 mkdir run-outputs/${dir}
 
 # the inputs to main.py are the replicates to run the optimizations with. 

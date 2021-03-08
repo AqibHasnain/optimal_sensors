@@ -7,7 +7,7 @@ from compress_pickle import dump, load
 import sys
 
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
-datadir = 'data/tpm_no_ribo.csv'
+datadir = 'data/tpm.csv'
 saveResults = True # save pickle file with data (filtered&sliced) & model output 
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
