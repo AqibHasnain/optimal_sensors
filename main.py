@@ -19,7 +19,7 @@ else:
 doReduce = True # if True, reduce dimension of model to min(m,n) where m is numtimepoints and n is dim of state
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment (tpm.csv)
 doFilter = True # set this to False if you don't want to remove any genes from the analysis
-filter_method = 'DTW' # 'CV' or 'DTW'
+filter_method = 'CV' # 'CV' or 'DTW'
 doFilterB4BackSub = True
 doNorm = False # set this to True to normalize data before filtering
 if len(sys.argv) < 2:
@@ -33,6 +33,10 @@ else:
 
 X,transcriptIDs,keepers,newntimepts = preprocess(datadir,reps,ntimepts,Norm=doNorm,Filter=doFilter,filterMethod=filter_method,\
                                                 filterB4BackSub=doFilterB4BackSub)
+# X is the rank-three tensor of background subtracted data with trajectories in the third dimension
+# transcriptIDs is a list of all transcriptIDs imported from the datadir
+# keepers is a list of indices corresponding to genes that we will keep for modeling and optimization
+# newntimepts is the number of timepoints being considered
 
 if not dodeepDMD:
     A,percent_nonzero_to_zero,newX,cd = dmd(X,newntimepts,len(reps),rank_reduce=doReduce,sparse_thresh=sparseThresh,makeSparse=doSparse)
@@ -67,7 +71,7 @@ else:
 
 keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
 
-C,C0 = energy_maximization_single_output(newX,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
+C,seed = energy_maximization_single_output(X,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
 if saveResults:
     datadict = {'X':X,\
@@ -75,7 +79,7 @@ if saveResults:
             'keepers':keepers,\
             'A':A,\
             'C':C,\
-            'C0':C0}
+            'seed':seed}
 
     namestr = ''
     for i in range(len(reps)):
