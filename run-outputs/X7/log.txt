@@ -1,1 +1,0 @@
-run-outputs/X7/BGSdata_transcriptIDs_keep_transcriptIDs.gz

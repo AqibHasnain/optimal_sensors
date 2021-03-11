@@ -234,12 +234,13 @@ datadir = 'data/tpm_removed_low_count_genes.csv'
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment
 reps = [0,1,2] # replicates to use. if all J replicates then it would be [0,1,2,...,J-1]
 doSave = True # after running the script to downselect genes, do you want to save the downselected df to a CSV? 
-savedir = sys.argv[1] # argument given from command line
+if doSave:
+    savedir = sys.argv[1] # argument given from command line
 doNoiseFilter = True # remove genes which have time series that are classified as noise using its autocorrelation
 noiseFilterThresh = 0.1 
 doReprFilter = True # remove genes which have time series that are not consistent across replicates
-reprFilterMethod = 'CV' # 'CV' or 'DTW' are the filters that can be applied to identify genes that are reproduceable across replicates
-reprFilterThresh = 0.25
+reprFilterMethod = 'DTW' # 'CV' or 'DTW' are the filters that can be applied to identify genes that are reproduceable across replicates
+reprFilterThresh = 0.1
 doSmooth = True # smooth data after filtering using Savitsky-Golay Filter
 window_size, polyorder = 7, 3 # parameters for Savitsky-Golay
 

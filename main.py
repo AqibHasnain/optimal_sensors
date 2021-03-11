@@ -8,6 +8,9 @@ import sys
 # this script should be run by calling ./run.sh
 
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
+# IMPORTANT: the file that is being loaded should contain a list of three things, one: the data, two: the IDs for all genes in 
+# dataset prior to preprocessing (if desired), three: the transcriptIDs corresponding to the dataset after preprocessing
+# items two and three can be the same if preprocessing was not used
 datadir = 'run-outputs/' + sys.argv[3] + '/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
 # datadir = 'run-outputs/X7/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
 saveResults = True # save pickle file with model, optimization result, and random seed used for optimization
@@ -55,7 +58,7 @@ else:
     A,newX,Xpred = trainKO(Net,netParams,X,newntimepts,len(reps),net_name,save_network=doSaveNN)
     # now also need to add some transcriptIDs for the extra observables
     for i in range(NODES_HL):
-        transcriptIDs.append('OBSERVABLE'+str(i))
+        keep_transcriptIDs.append('OBSERVABLE'+str(i))
 
 if len(sys.argv) <= 4 :
     Tf = newntimepts-1 # finite-horizon for optimization, if not specifying horizon from command line
@@ -63,18 +66,10 @@ if len(sys.argv) <= 4 :
 else:
     Tf = int(sys.argv[4])
     ic = int(sys.argv[5])
-
-keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
-
 C,seed = energy_maximization_single_output(X,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
-
-        self.X = datadict['X'] # dataset used to fit model parameters
-        self.transcriptIDs = datadict['transcriptIDs'] # all transcriptIDs of original dataset
-        self.keep_transcriptIDs = datadict['keep_transcriptIDs']
-
 if saveResults:
-    datadict = {'X':X,'transcriptIDs':,'keep_transcriptIDs':keep_transcriptIDs,'A':A,'C':C,'seed':seed}
+    datadict = {'X':X,'transcriptIDs':transcriptIDs,'keep_transcriptIDs':keep_transcriptIDs,'A':A,'C':C,'seed':seed}
 
     namestr = ''
     for i in range(len(reps)):
@@ -94,21 +89,4 @@ if saveResults:
 
 print(fn)
 print('\n')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
