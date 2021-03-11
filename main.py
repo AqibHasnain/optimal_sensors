@@ -6,7 +6,7 @@ from compress_pickle import dump, load
 import sys
 
 # this script should be run by calling ./run.sh
-
+# if the data is already preprocessed, comment out the python3 preprocess.py command in run.sh before calling the script
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
 # IMPORTANT: the file that is being loaded should contain a list of three things, one: the data, two: the IDs for all genes in 
 # dataset prior to preprocessing (if desired), three: the transcriptIDs corresponding to the dataset after preprocessing
