@@ -1,14 +1,16 @@
 
-from preprocess import *
 from dmd import *
 from observability import *
 from deep_KO_learning import *
 from compress_pickle import dump, load
 import sys
 
+# this script should be run by calling ./run.sh
+
 #-------------------------------------USER INPUT REQUIRED HERE----------------------------------------------------#
-datadir = 'data/tpm.csv'
-saveResults = True # save pickle file with data (filtered&sliced) & model output 
+datadir = 'run-outputs/' + sys.argv[3] + '/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
+# datadir = 'run-outputs/X7/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
+saveResults = True # save pickle file with model, optimization result, and random seed used for optimization
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
 doSparse = True # if True, induce sparsity via sparsity threshold on the entries of A
@@ -17,29 +19,22 @@ if doSparse:
 else:
     sparseThresh = 0.0
 doReduce = True # if True, reduce dimension of model to min(m,n) where m is numtimepoints and n is dim of state
-ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment (tpm.csv)
-doFilter = True # set this to False if you don't want to remove any genes from the analysis
-filter_method = 'CV' # 'CV' or 'DTW'
-doFilterB4BackSub = True
-doNorm = False # set this to True to normalize data before filtering
-if len(sys.argv) < 2:
-    reps = [0,1,2] # if not specifying reps from command line, put reps to use in list here
-else:
-    reps = sys.argv[1]
-    reps = list(reps.strip('[]').split(','))
-    reps = [int(i) for i in reps] 
 # there are some additional, not necessary, inputs scattered below e.g. number of hidden layer in network for deepKOlearning
 #-----------------------------------------------------------------------------------------------------------------#
 
-X,transcriptIDs,keepers,newntimepts = preprocess(datadir,reps,ntimepts,Norm=doNorm,Filter=doFilter,filterMethod=filter_method,\
-                                                filterB4BackSub=doFilterB4BackSub)
+X,transcriptIDs,keep_transcriptIDs = load(datadir)
 # X is the rank-three tensor of background subtracted data with trajectories in the third dimension
 # transcriptIDs is a list of all transcriptIDs imported from the datadir
-# keepers is a list of indices corresponding to genes that we will keep for modeling and optimization
-# newntimepts is the number of timepoints being considered
+# keep_transcriptIDs is a list of the transcriptIDs that are being considered and correspond to rows of X
+
+# get the number of timepoints being considered after preprocessing
+newntimepts = X.shape[1]
+# get the replicates being considered after preprocessing
+reps = list(range(X.shape[2]))
+print(datadir)
 
 if not dodeepDMD:
-    A,percent_nonzero_to_zero,newX,cd = dmd(X,newntimepts,len(reps),rank_reduce=doReduce,sparse_thresh=sparseThresh,makeSparse=doSparse)
+    A,newX,cd = dmd(X,newntimepts,len(reps),rank_reduce=doReduce,sparse_thresh=sparseThresh,makeSparse=doSparse)
     # A is the DMD operator
     # newX is subsetted and reshaped (2d) global snapshot matrix
     # X_pred is the matrix of predictions given by A for X
@@ -73,36 +68,27 @@ keep_transcriptIDs = [transcriptIDs[i] for i in keepers]
 
 C,seed = energy_maximization_single_output(X,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
+
+        self.X = datadict['X'] # dataset used to fit model parameters
+        self.transcriptIDs = datadict['transcriptIDs'] # all transcriptIDs of original dataset
+        self.keep_transcriptIDs = datadict['keep_transcriptIDs']
+
 if saveResults:
-    datadict = {'X':X,\
-            'transcriptIDs':transcriptIDs,\
-            'keepers':keepers,\
-            'A':A,\
-            'C':C,\
-            'seed':seed}
+    datadict = {'X':X,'transcriptIDs':,'keep_transcriptIDs':keep_transcriptIDs,'A':A,'C':C,'seed':seed}
 
     namestr = ''
     for i in range(len(reps)):
         namestr += str(reps[i])
-    if doNorm:
-        namestr += '_norm'
     if doSparse:
         namestr += '_sparse'+str(sparseThresh)
     if doReduce:
         namestr += '_reduced'
-    if doFilterB4BackSub:
-        namestr += '_filterB4BS_'+str(filter_method)
-    else:
-        namestr += '_filterAfterBS_'+str(filter_method)
     namestr += '_IC'+str(ic)+'_m'+str(Tf)
-
     if len(sys.argv) >= 3:
         namestr += '_'+str(sys.argv[2])
-
     savedir = 'run-outputs'
     if len(sys.argv) >= 4:
     	savedir += '/'+str(sys.argv[3])
-
     fn = savedir+'/dump'+namestr+'.gz'
     dump(datadict, fn)
 

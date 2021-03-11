@@ -55,12 +55,10 @@ def dmd(X,ntimepts,nreps,sparse_thresh=2e-3,rank_reduce=False,makeSparse=False,e
     # make model sparse 
     if makeSparse:
         A, percent_nonzero_to_zero = sparsity(A,sparse_thresh)
-    else: 
-        percent_nonzero_to_zero = 'model was not sparsified'
 
     # calculate prediction accuracy 
     X = X.reshape(len(X),(ntimepts)*nreps,order='F')
     X_pred, cd = n_step_prediction(A,X,ntimepts,nreps)
 
-    return A,percent_nonzero_to_zero,X,cd
+    return A,X,cd
 
