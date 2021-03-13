@@ -74,7 +74,7 @@ def acorr(x):
     return autocorr
 
 def autocorrelation(data):
-    '''Autocorrelation of all signals in data where data is rank three tensor with data for each replicate in third dimension'''
+    '''Autocorrelation of all signals in data where data is rank three tensor with each replicate in third dimension'''
     acorr_all = np.empty((data.shape))
     for ii in range(data.shape[0]):
         for jj in range(data.shape[2]):
@@ -147,7 +147,7 @@ def repr_filter(data_c,data_t,reps,filterMethod,filterThresh):
     print(len(keepers_repr),'genes out of',len(data_c),'passed the reproducibility test: '+filterMethod,'with threshold',filterThresh)
     return keepers_repr
 
-def preprocess(datadir,reps,ntimepts,noiseFilter=False,noiseFilterThresh=0.1,reprFilter=False,reprFilterMethod='CV',\
+def preprocess(datadir,reps,ntimepts,tp_list,noiseFilter=False,noiseFilterThresh=0.1,reprFilter=False,reprFilterMethod='CV',\
                                         reprFilterThresh=0.25,Smooth=False,window_size=3,polyorder=1):
     
     '''This function loads the gene expression time series, applies an autocorrelation based filter and either a SNR or DTW based filter to 
@@ -173,7 +173,9 @@ def preprocess(datadir,reps,ntimepts,noiseFilter=False,noiseFilterThresh=0.1,rep
     # the following reshapes the data appropriately so that they each are rank three tensors with shape nxmxr where n is state dimension, m is number of timepoints, r is number of replicates
     data_c, data_t = put_groups_in_3D(data_c,nreps,ntimepts), put_groups_in_3D(data_t,nreps,ntimepts) 
     # downselecting timepoints: first two timepoints are pre-treatment, last timepoint is anomalous, downselecting replicates: if desired
-    data_c, data_t = data_c[:,2:-1,reps], data_t[:,2:-1,reps] 
+    data_c, data_t = data_c[:,2:-1,reps], data_t[:,2:-1,reps]
+    # will further downselect the tps desired based on tps_list downstream, but going to get the shifted list now
+    tp_list_used = [ x -  2 for x in tp_list]
 
     if noiseFilter:
         '''
@@ -226,12 +228,19 @@ def preprocess(datadir,reps,ntimepts,noiseFilter=False,noiseFilterThresh=0.1,rep
 
     # Background subtracting the control from the treatment
     X = np.maximum(data_t - data_c,0.0)
+    X = X[:,tp_list_used]
+    print('Timepoints being used', tp_list_used)
 
-    return X,transcriptIDs,keep_transcriptIDs
+    return X,transcriptIDs,keep_transcriptIDs,keepers
 
 
 datadir = 'data/tpm_removed_low_count_genes.csv'
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment
+if len(sys.argv) < 2:
+    tps_to_keep = list(range(2,ntimepts-1)) # baseline is to keep the first tp malathion was added and last tp is neglected for anomalyous behavior
+else: 
+    tps_to_keep = (list(map(int, (sys.argv[2]).strip('[]').split(','))))
+
 reps = [0,1,2] # replicates to use. if all J replicates then it would be [0,1,2,...,J-1]
 doSave = True # after running the script to downselect genes, do you want to save the downselected df to a CSV? 
 if doSave:
@@ -244,12 +253,12 @@ reprFilterThresh = 0.025 # 0.1
 doSmooth = True # smooth data after filtering using Savitsky-Golay Filter
 window_size, polyorder = 7, 3 # parameters for Savitsky-Golay
 
-X,transcriptIDs,keep_transcriptIDs = preprocess(datadir,reps,ntimepts,noiseFilter=doNoiseFilter,noiseFilterThresh=noiseFilterThresh,reprFilter=doReprFilter,\
+X,transcriptIDs,keep_transcriptIDs,keepers = preprocess(datadir,reps,ntimepts,tps_to_keep,noiseFilter=doNoiseFilter,noiseFilterThresh=noiseFilterThresh,reprFilter=doReprFilter,\
                                         reprFilterMethod=reprFilterMethod,reprFilterThresh=reprFilterThresh,Smooth=doSmooth,window_size=window_size,polyorder=polyorder)
 
 if doSave:
     fn = savedir+'/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
-    savelist = [X,transcriptIDs,keep_transcriptIDs]
+    savelist = [X,transcriptIDs,keep_transcriptIDs,keepers,tps_to_keep]
     dump(savelist, fn)
 
 

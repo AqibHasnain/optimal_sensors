@@ -12,7 +12,6 @@ import sys
 # dataset prior to preprocessing (if desired), three: the transcriptIDs corresponding to the dataset after preprocessing
 # items two and three can be the same if preprocessing was not used
 datadir = 'run-outputs/' + sys.argv[3] + '/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
-# datadir = 'run-outputs/X7/BGSdata_transcriptIDs_keep_transcriptIDs.gz'
 saveResults = True # save pickle file with model, optimization result, and random seed used for optimization
 dodeepDMD = False # if True, use deep KO learning (pytorch) for system identification (bases and KO). Recommend setting doNorm=True if doDeepDMD
 doSaveNN = False # if True, saves neural net params
@@ -25,7 +24,7 @@ doReduce = True # if True, reduce dimension of model to min(m,n) where m is numt
 # there are some additional, not necessary, inputs scattered below e.g. number of hidden layer in network for deepKOlearning
 #-----------------------------------------------------------------------------------------------------------------#
 
-X,transcriptIDs,keep_transcriptIDs = load(datadir)
+X,transcriptIDs,keep_transcriptIDs,keepers,tps_to_keep = load(datadir)
 # X is the rank-three tensor of background subtracted data with trajectories in the third dimension
 # transcriptIDs is a list of all transcriptIDs imported from the datadir
 # keep_transcriptIDs is a list of the transcriptIDs that are being considered and correspond to rows of X
@@ -69,7 +68,8 @@ else:
 C,seed = energy_maximization_single_output(X,A,newntimepts,reps,Tf,keep_transcriptIDs,IC=ic) # if not specified, IC=0
 
 if saveResults:
-    datadict = {'X':X,'transcriptIDs':transcriptIDs,'keep_transcriptIDs':keep_transcriptIDs,'A':A,'C':C,'seed':seed}
+    datadict = {'X':X,'transcriptIDs':transcriptIDs,'keep_transcriptIDs':keep_transcriptIDs,'keepers':keepers,\
+                    'tps_kept':tps_to_keep,'A':A,'C':C,'seed':seed}
 
     namestr = ''
     for i in range(len(reps)):
