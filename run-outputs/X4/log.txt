@@ -1,0 +1,48 @@
+run-outputs/X4/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2956, 3, 3)
+0.09205639759699503 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9970639714625446
+---------Computing R^2 for n-step prediction---------
+0.6133468151092529 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 8.549e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -629317551.4399804
+Final objective: -6275100302897.173
+11.195930874347686 minutes
+run-outputs/X4/dump012_sparse0.003_reduced_IC0_m2_run1.gz
+
+
+run-outputs/X4/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2956, 3, 3)
+0.08993994394938151 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9970639714625446
+---------Computing R^2 for n-step prediction---------
+0.610116720199585 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 8.549e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -645509278.5807111
+Final objective: -28972459018489.5
+12.84634072780609 minutes
+run-outputs/X4/dump012_sparse0.003_reduced_IC0_m2_run2.gz
+
+
+run-outputs/X4/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2956, 3, 3)
+0.09112451076507569 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9970639714625446
+---------Computing R^2 for n-step prediction---------
+0.6237614154815674 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 8.549e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -651165228.5140693
+Final objective: -77100812291229.42
+12.408657463391622 minutes
+run-outputs/X4/dump012_sparse0.003_reduced_IC0_m2_run3.gz
+
+

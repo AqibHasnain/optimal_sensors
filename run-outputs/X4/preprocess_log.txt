@@ -1,0 +1,6 @@
+-------------------- Preprocessing replicates [0, 1, 2] --------------------
+4093 genes out of 4505 passed the noise test: Autocorrelation with at least one of first three lags > 0.1
+3224 genes out of 4505 passed the reproducibility test: DTW with threshold 0.025
+2956 genes out of 4505 are being kept
+Smoothing time series of each gene using Savitsky-Golay filter with window_length of 7 and polyorder of 3
+Timepoints being used [1, 4, 7]
