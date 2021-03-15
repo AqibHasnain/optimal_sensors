@@ -16,7 +16,6 @@ def get_groups_from_df(data,labels):
     This functions builds the two matrices (one per group)
     1rep1, 1rep2, 1rep3, ..., 12rep1, 12rep2, 12rep3
     1Mrep1, 1Mrep3, 1Mrep3, ..., 12Mrep1, 12Mrep2, 12Mrep3 '''
-    
     data_c = np.zeros([data.shape[0],int(data.shape[1]/2)]) # c for control
     data_t = np.zeros([data.shape[0],int(data.shape[1]/2)]) # t for treatment
     c = 0
@@ -161,7 +160,7 @@ def preprocess(datadir,reps,ntimepts,tp_list,noiseFilter=False,noiseFilterThresh
     # load the csv into a pandas dataframe
     df = pd.read_csv(datadir)
     nreps = 3 # number of replicates in the P. fluorescens malathion dataset
-    # the column headers (excluding the first) contain the sample labels e.g. time0_condition0_...
+    # the column headers (excluding the first) contain the sample labels e.g. time0_condition0_...    
     sampleLabels = list(df.columns[1:])
     # the first column contains the transcriptIDs
     transcriptIDs = list(df.iloc[:,0])
@@ -234,13 +233,12 @@ def preprocess(datadir,reps,ntimepts,tp_list,noiseFilter=False,noiseFilterThresh
     return X,transcriptIDs,keep_transcriptIDs,keepers
 
 
-datadir = 'data/tpm_removed_low_count_genes.csv'
+datadir = 'data/tpm_removed_low_count_genes_no_ribo.csv'
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment
 if len(sys.argv) < 2:
     tps_to_keep = list(range(2,ntimepts-1)) # baseline is to keep the first tp malathion was added and last tp is neglected for anomalyous behavior
 else: 
     tps_to_keep = (list(map(int, (sys.argv[2]).strip('[]').split(','))))
-
 reps = [0,1,2] # replicates to use. if all J replicates then it would be [0,1,2,...,J-1]
 doSave = True # after running the script to downselect genes, do you want to save the downselected df to a CSV? 
 if doSave:
