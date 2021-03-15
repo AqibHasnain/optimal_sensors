@@ -19,6 +19,9 @@ main=true
 
 if [ "$preprocess" = true ] ; then
 	# save output of preprocess to directory specified in first argument
+	# arguments: 
+	# 1) directory to save outputs to 
+	# 2) timepoints to keep as a list
 	python3 preprocess.py run-outputs/${dir1} [2,4,6,8,10] | tee run-outputs/${dir1}/preprocess_log.txt
 	python3 preprocess.py run-outputs/${dir2} [2,5,8] | tee run-outputs/${dir2}/preprocess_log.txt
 	python3 preprocess.py run-outputs/${dir3} [3,5,7,9] | tee run-outputs/${dir3}/preprocess_log.txt
