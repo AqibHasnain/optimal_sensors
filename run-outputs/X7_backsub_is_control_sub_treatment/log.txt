@@ -1,0 +1,80 @@
+run-outputs/X7_backsub_is_control_sub_treatment/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09927342732747396 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9772043148949198
+---------Computing R^2 for n-step prediction---------
+8.014540672302246 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.157e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1395545983.8197386
+Final objective: -5204744932309.299
+149.21612609227498 minutes
+run-outputs/X7_backsub_is_control_sub_treatment/dump012_sparse0.003_reduced_IC0_m8_run1.gz
+
+
+run-outputs/X7_backsub_is_control_sub_treatment/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09354129632314047 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9772043148949198
+---------Computing R^2 for n-step prediction---------
+7.95378041267395 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.157e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1379810067.7551339
+Final objective: -120579144904690.0
+20.97808527946472 minutes
+run-outputs/X7_backsub_is_control_sub_treatment/dump012_sparse0.003_reduced_IC0_m8_run2.gz
+
+
+run-outputs/X7_backsub_is_control_sub_treatment/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09694271485010783 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9772043148949198
+---------Computing R^2 for n-step prediction---------
+8.041078090667725 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.157e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1404780854.4604824
+Final objective: -156157599437134.0
+15.105275905132293 minutes
+run-outputs/X7_backsub_is_control_sub_treatment/dump012_sparse0.003_reduced_IC0_m8_run3.gz
+
+
+run-outputs/X7_backsub_is_control_sub_treatment/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09748009443283082 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9772043148949198
+---------Computing R^2 for n-step prediction---------
+8.046579360961914 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.157e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1475075847.195216
+Final objective: -160075240481656.6
+15.508488249778747 minutes
+run-outputs/X7_backsub_is_control_sub_treatment/dump012_sparse0.003_reduced_IC0_m8_run4.gz
+
+
+run-outputs/X7_backsub_is_control_sub_treatment/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.10109763145446778 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.9772043148949198
+---------Computing R^2 for n-step prediction---------
+8.136502265930176 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.157e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1311433198.2067497
+Final objective: -18895709857723.47
+13.336785678068797 minutes
+run-outputs/X7_backsub_is_control_sub_treatment/dump012_sparse0.003_reduced_IC0_m8_run5.gz
+
+
