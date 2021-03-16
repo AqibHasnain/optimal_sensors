@@ -235,7 +235,7 @@ def preprocess(datadir,reps,ntimepts,tp_list,noiseFilter=False,noiseFilterThresh
 
 datadir = 'data/tpm_removed_low_count_genes_no_ribo.csv'
 ntimepts = 12 # ntimepts per trajectory (replicate), 12 for monoculture experiment
-if len(sys.argv) < 2:
+if len(sys.argv) <= 2:
     tps_to_keep = list(range(2,ntimepts-1)) # baseline is to keep the first tp malathion was added and last tp is neglected for anomalyous behavior
 else: 
     tps_to_keep = (list(map(int, (sys.argv[2]).strip('[]').split(','))))
