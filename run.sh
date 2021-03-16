@@ -2,7 +2,7 @@
 
 # run one of or both preprocess.py and main.py and write outputs to specified directory
 
-dir1='X6'
+dir1='X7_backsub_is_control_sub_treatment'
 # dir2='X2'
 # dir3='X3'
 # dir4='X4'

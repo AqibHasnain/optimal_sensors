@@ -226,7 +226,8 @@ def preprocess(datadir,reps,ntimepts,tp_list,noiseFilter=False,noiseFilterThresh
         print('Smoothing time series of each gene using Savitsky-Golay filter with window_length of',window_size,'and polyorder of',polyorder)
 
     # Background subtracting the control from the treatment
-    X = np.maximum(data_t - data_c,0.0)
+    # X = np.maximum(data_t - data_c,0.0)
+    X = np.maximum(data_c - data_t,0.0)
     X = X[:,tp_list_used]
     print('Timepoints being used', tp_list_used)
 
