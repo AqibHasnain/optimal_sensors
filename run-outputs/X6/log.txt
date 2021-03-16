@@ -1,0 +1,80 @@
+run-outputs/X6/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09186567862828572 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.975209957071248
+---------Computing R^2 for n-step prediction---------
+8.025664806365967 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.237e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1053316137.0209333
+Final objective: -12509687567933.924
+38.32431208292643 minutes
+run-outputs/X6/dump012_sparse0.003_reduced_IC0_m8_run1.gz
+
+
+run-outputs/X6/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09128073453903199 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.975209957071248
+---------Computing R^2 for n-step prediction---------
+8.081981420516968 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.237e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1069632437.8896172
+Final objective: -8316453545986.602
+52.07400647799174 minutes
+run-outputs/X6/dump012_sparse0.003_reduced_IC0_m8_run2.gz
+
+
+run-outputs/X6/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09225510358810425 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.975209957071248
+---------Computing R^2 for n-step prediction---------
+8.071342468261719 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.237e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1084364027.4084642
+Final objective: -2637133021429.7104
+52.7815060655276 minutes
+run-outputs/X6/dump012_sparse0.003_reduced_IC0_m8_run3.gz
+
+
+run-outputs/X6/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09356768131256103 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.975209957071248
+---------Computing R^2 for n-step prediction---------
+7.982586622238159 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.237e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1085311943.035634
+Final objective: -2345655821311.9424
+185.87268313964208 minutes
+run-outputs/X6/dump012_sparse0.003_reduced_IC0_m8_run4.gz
+
+
+run-outputs/X6/BGSdata_transcriptIDs_keep_transcriptIDs.gz
+---------Computing DMD operator---------
+Dataset dimension (2900, 9, 3)
+0.09172708590825399 minutes for DMD
+---------Forcing sparsity in model with threshhold 0.003 ---------
+Percent of nonzero parameters set to zero: 0.975209957071248
+---------Computing R^2 for n-step prediction---------
+8.015749454498291 seconds for n-step prediction
+Coefficient of determination for n-step prediction is 9.237e-01
+------Optimizing for Optimal State Observer------
+Initial objective: -1074128799.4267032
+Final objective: -37439132602856.48
+31.060126090049742 minutes
+run-outputs/X6/dump012_sparse0.003_reduced_IC0_m8_run5.gz
+
+
